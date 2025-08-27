@@ -1,0 +1,10 @@
+export 'episode_viewmodel.dart';
+export 'screen/episode_screen.dart';
+export 'screen/episode_detail_screen.dart';
+export 'constant/constant.dart';
+export 'data/episode_repo.dart';
+export 'data/episode_repo_impl.dart';
+export 'data/model/episode_response_model.dart';
+export 'data/remote/remote.dart';
+export 'episode_detail_viewmodel.dart';
+export 'screen/screen.dart';

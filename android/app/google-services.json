@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1005732016721",
+    "project_id": "mydrivenepal-dc12e",
+    "storage_bucket": "mydrivenepal-dc12e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005732016721:android:11a7792b50fd995928fe70",
+        "android_client_info": {
+          "package_name": "com.mydrivenepal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005732016721-3nd143lvca489esh0jj8ekrort9vds9a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mydrivenepal",
+            "certificate_hash": "b8863d218d488c7c3071b378e0f18aea9f7aa4ed"
+          }
+        },
+        {
+          "client_id": "1005732016721-9qah499h1rf0ggm4vnvb60jmu79iu915.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBomCwy14y2FK2A-aHU-k-6HZukbNgi0Pk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005732016721-9qah499h1rf0ggm4vnvb60jmu79iu915.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

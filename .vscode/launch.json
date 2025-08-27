@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MyDriveNepal",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": [
+        "--flavor",
+        "mydrivenepal",
+        "--dart-define",
+        "FLAVOR=mydrivenepal"
+      ]
+    },
+    {
+      "name": "Holista",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "holista",
+        "--dart-define",
+        "FLAVOR=holista"
+      ]
+    }
+  ]
+}

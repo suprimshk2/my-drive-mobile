@@ -1,0 +1,123 @@
+{
+    "app_name": "MySwaddle",
+    "text_field": {
+        "username_label": "Phone Number*",
+        "username_hint_txt": "Enter your phone number"
+    },
+    "theme_config": {
+        "light": {
+            "primary": {
+                "strong": "0xFF032960",
+                "bold": "0xFF0547A9",
+                "main": "0xFF0766F1",
+                "soft": "0xFF66A2FB",
+                "subtle": "0xFFCCE0FE"
+            },
+            "secondary": {
+                "strong": "0xFF671667",
+                "bold": "0xFFB427B4",
+                "main": "0xFFDC5DDC",
+                "soft": "0xFFEA9EEA",
+                "subtle": "0xFFF8DFF8"
+            },
+            "success": {
+                "strong": "0xFF003a27",
+                "bold": "0xFF006645",
+                "main": "0xFF009262",
+                "soft": "0xFF66BEA1",
+                "subtle": "0xFFe6f4ef"
+            },
+            "warning": {
+                "strong": "0xFF624c1a",
+                "bold": "0xFFac842e",
+                "main": "0xFFF6BD41",
+                "soft": "0xFFfad78d",
+                "subtle": "0xFFfef8ec"
+            },
+            "error": {
+                "strong": "0xFF480f0c",
+                "bold": "0xFF7d1a15",
+                "main": "0xFFB3251E",
+                "soft": "0xFFd17c78",
+                "subtle": "0xFFf7e9e9"
+            },
+            "info": {
+                "strong": "0xFF072a40",
+                "bold": "0xFF0c4a6f",
+                "main": "0xFF116a9f",
+                "soft": "0xFF88b5cf",
+                "subtle": "0xFFe7f0f5"
+            },
+            "gray": {
+                "strong": "0xFF2D2D2D",
+                "bold": "0xFF525252",
+                "main": "0xFF848484",
+                "soft": "0xFFB3B3B3",
+                "subtle": "0xFFF8F9FA"
+            },
+            "gradients": {
+                "button": [
+                    "0xFF0766E6",
+                    "0xFFDC5DDC"
+                ]
+            }
+        },
+        "dark": {
+            "primary": {
+                "strong": "0xFF060D17",
+                "bold": "0xFF0D1B2E",
+                "main": "0xFF162C4D",
+                "soft": "0xFF336AB9",
+                "subtle": "0xFF94B3E1"
+            },
+            "secondary": {
+                "strong": "0xFF411D41",
+                "bold": "0xFF823A82",
+                "main": "0xFFC3763C",
+                "soft": "0xFFD7A4D7",
+                "subtle": "0xFFEBD1EB"
+            },
+            "success": {
+                "strong": "0xFF003A27",
+                "bold": "0xFF124635",
+                "main": "0xFF1D7558",
+                "soft": "0xFF3DCE9F",
+                "subtle": "0xFF9EE7CF"
+            },
+            "warning": {
+                "strong": "0xFF4B3815",
+                "bold": "0xFF90702A",
+                "main": "0xFFD2B065",
+                "soft": "0xFFE1CA98",
+                "subtle": "0xFFF0E5CC"
+            },
+            "error": {
+                "strong": "0xFF2D1312",
+                "bold": "0xFF7D1A15",
+                "main": "0xFF95403C",
+                "soft": "0xFFC67470",
+                "subtle": "0xFFE2B9B7"
+            },
+            "info": {
+                "strong": "0xFF0E1E27",
+                "bold": "0xFF1B3B4E",
+                "main": "0xFF2D6383",
+                "soft": "0xFF5A9DC6",
+                "subtle": "0xFFACCEE2"
+            },
+            "gray": {
+                "strong": "0xFF292929",
+                "bold": "0xFF404040",
+                "main": "0xFF808080",
+                "soft": "0xFFB0B0B0",
+                "subtle": "0xFFE2E2E2"
+            },
+            "gradients": {
+                "button": [
+                    "0xFF0552C1",
+                    "0xFFA13FAF"
+                ]
+            }
+        }
+    }
+}

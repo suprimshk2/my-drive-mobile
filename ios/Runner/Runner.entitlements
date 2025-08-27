@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:holista-4a40e.web.app</string>
+		<string>applinks:uat-holista.noveltytechnology.com</string>
+		<string>applinks:myswaddle-uat.noveltytechnology.com</string>
+		<string>applinks:myswaddle.holistahealth.com</string>
+	</array>
+</dict>
+</plist>
