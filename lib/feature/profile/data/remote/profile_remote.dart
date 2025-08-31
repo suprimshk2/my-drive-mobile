@@ -7,4 +7,5 @@ abstract class ProfileRemote {
   Future<UserDataResponse> getUserData();
   Future<SwitchUserModeResponse> switchMode(String roleId);
   Future<FetchListResponse<UserRoleResponse>> fetchUserRoles();
+  Future<void> assignRole(String roleId);
 }

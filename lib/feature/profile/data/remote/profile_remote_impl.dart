@@ -48,4 +48,13 @@ class ProfileRemoteImpl extends ProfileRemote {
     );
     return adoptResponse;
   }
+
+  @override
+  Future<void> assignRole(String roleId) async {
+    String url = RemoteAPIConstant.ASSIGN_ROLE;
+    final response = await _apiClient.post(url, {
+      'roleId': roleId,
+    });
+    return response.data;
+  }
 }

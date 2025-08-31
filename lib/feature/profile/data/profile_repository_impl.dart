@@ -586,4 +586,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     log("ProfileRepository: Role ${role.name} matches mode $mode: $matches");
     return matches;
   }
+
+  @override
+  Future<bool> assignRole(String roleId) async {
+    await _profileRemote.assignRole(roleId);
+    return true;
+  }
 }

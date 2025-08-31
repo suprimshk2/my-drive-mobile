@@ -65,4 +65,7 @@ class RemoteAPIConstant {
 
   // Fetch User Roles
   static String FETCH_USER_ROLES = '/users/roles';
+
+  // Assign Role
+  static String ASSIGN_ROLE = '/auth/assign-role';
 }

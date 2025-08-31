@@ -3,7 +3,6 @@ import 'package:mydrivenepal/data/model/fetch_list_response.dart';
 import 'package:mydrivenepal/feature/profile/data/models/user_role_response.dart';
 import 'package:mydrivenepal/feature/profile/data/profile_repository.dart';
 import 'package:mydrivenepal/feature/profile/data/models/user_mode_model.dart';
-import 'package:mydrivenepal/feature/profile/data/models/permission_model.dart';
 import 'package:mydrivenepal/feature/auth/data/model/login_success_model.dart';
 import 'package:mydrivenepal/feature/home/data/model/app_version_model.dart';
 import 'package:mydrivenepal/feature/profile/data/models/user_data.dart';
@@ -60,6 +59,28 @@ class ProfileViewmodel extends ChangeNotifier {
   set logoutUseCase(Response<bool> response) {
     _logoutUseCase = response;
     notifyListeners();
+  }
+
+  Response<bool> _assignRoleUseCase = Response<bool>();
+  Response<bool> get assignRoleUseCase => _assignRoleUseCase;
+
+  set assignRoleUseCase(Response<bool> response) {
+    _assignRoleUseCase = response;
+    notifyListeners();
+  }
+
+  Future<void> assignRole() async {
+    try {
+      assignRoleUseCase = Response.loading();
+      final riderRoleId = getRoleIdForMode(UserMode.rider);
+      if (riderRoleId == null) return;
+      final response = await _profileRepository.assignRole(riderRoleId);
+      assignRoleUseCase = Response.complete(response);
+
+      notifyListeners();
+    } catch (e) {
+      assignRoleUseCase = Response.error(e);
+    }
   }
 
   // User Mode Methods with Enhanced Error Handling

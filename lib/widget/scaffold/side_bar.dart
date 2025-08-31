@@ -8,6 +8,8 @@ import 'package:mydrivenepal/shared/shared.dart';
 import 'package:mydrivenepal/shared/theme/app_colors_theme_extension.dart';
 import 'package:mydrivenepal/shared/theme/app_text_theme.dart';
 import 'package:mydrivenepal/widget/alert/alert_dialog_widget.dart';
+import 'package:mydrivenepal/widget/button/variants/rounded_filled_button_widget.dart';
+import 'package:mydrivenepal/widget/button/variants/rounded_outlined_button_widget.dart';
 import 'package:mydrivenepal/widget/image/image.dart';
 import 'package:mydrivenepal/widget/shimmer/card_shimmer.dart';
 import 'package:mydrivenepal/widget/text/text.dart';
@@ -82,12 +84,20 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
           log("SideNavigationBar: Build - currentMode: ${profileViewModel.currentMode}");
 
           return Drawer(
-            child: ListView(
+            child: Column(
               children: [
-                _buildUserHeader(context, userData, isLoading, appColors),
-                _buildModeSection(context, profileViewModel),
-                _buildLogoutSection(context, profileViewModel),
-                _buildBottomSection(context, profileViewModel),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      _buildUserHeader(context, userData, isLoading, appColors),
+                      _buildModeSection(context, profileViewModel),
+                      _buildLogoutSection(context, profileViewModel),
+                    ],
+                  ),
+                ),
+                !profileViewModel.canSwitchToDriver
+                    ? _buildBeADriverSection(context, profileViewModel)
+                    : const SizedBox.shrink(),
               ],
             ),
           );
@@ -472,6 +482,543 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
         );
       }
     }
+  }
+
+  /// Builds the "Be a Driver" section at the bottom of the drawer
+  Widget _buildBeADriverSection(
+      BuildContext context, ProfileViewmodel profileViewModel) {
+    // Don't show if user is already in driver mode
+    if (profileViewModel.isDriverMode) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).dividerColor,
+            width: 0.5,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Main button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _onBeADriverTapped(context, profileViewModel),
+              icon: const Icon(Icons.directions_car, color: Colors.white),
+              label: const Text(
+                'Be a Driver',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(vertical: Dimens.spacing_large),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(Dimens.spacing_12),
+                ),
+                elevation: 2,
+                shadowColor: Theme.of(context).primaryColor.withOpacity(0.3),
+              ),
+            ),
+          ),
+
+          // Subtitle
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'Start earning by driving with us',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.color
+                        ?.withOpacity(0.7),
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Handles the "Be a Driver" button tap with comprehensive logic
+  Future<void> _onBeADriverTapped(
+      BuildContext context, ProfileViewmodel profileViewModel) async {
+    try {
+      // Close the drawer first
+      if (context.mounted) {
+        context.pop();
+      }
+
+      // Check if user already has driver capabilities
+      if (profileViewModel.canSwitchToDriver) {
+        // User can switch to driver mode - show confirmation dialog
+        await _showDriverModeConfirmation(context, profileViewModel);
+      } else {
+        // User needs to register as a driver - navigate to registration
+        await _navigateToDriverRegistration(context, profileViewModel);
+      }
+    } catch (e) {
+      log("SideNavigationBar: Error in _onBeADriverTapped: $e");
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Something went wrong. Please try again.');
+      }
+    }
+  }
+
+  /// Shows confirmation dialog for switching to driver mode
+  Future<void> _showDriverModeConfirmation(
+      BuildContext context, ProfileViewmodel profileViewModel) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.directions_car,
+              color: Theme.of(context).primaryColor,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            const Text('Switch to Driver Mode'),
+          ],
+        ),
+        content: const Text(
+          'You already have driver access. Would you like to switch to driver mode now?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await _switchToDriverMode(context, profileViewModel);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Switch Now'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Switches the user to driver mode
+  Future<void> _switchToDriverMode(
+      BuildContext context, ProfileViewmodel profileViewModel) async {
+    try {
+      // Show loading indicator
+      _showLoadingSnackBar(context, 'Switching to Driver Mode...');
+
+      // Attempt to switch to driver mode
+      final success = await profileViewModel.switchToDriverMode();
+
+      // Dismiss loading indicator
+      _dismissSnackBar(context);
+
+      if (success && context.mounted) {
+        // Show success message
+        _showSuccessSnackBar(context, 'Successfully switched to Driver Mode!');
+
+        // Navigate to driver mode screen
+        context.go(RouteNames.userMode);
+      } else if (context.mounted) {
+        // Show error message
+        final errorMsg =
+            profileViewModel.errorMessage ?? 'Failed to switch to driver mode';
+        _showErrorSnackBar(context, errorMsg);
+      }
+    } catch (e) {
+      log("SideNavigationBar: Error switching to driver mode: $e");
+      _dismissSnackBar(context);
+      if (context.mounted) {
+        _showErrorSnackBar(
+            context, 'Error switching to driver mode: ${e.toString()}');
+      }
+    }
+  }
+
+  /// Navigates to driver registration flow using bottom sheet
+  Future<void> _navigateToDriverRegistration(
+      BuildContext context, ProfileViewmodel profileViewModel) async {
+    try {
+      // Show bottom sheet for driver registration
+      final shouldProceed = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) =>
+            _buildDriverRegistrationBottomSheet(context, profileViewModel),
+      );
+
+      if (shouldProceed == true && context.mounted) {
+        // Navigate to driver registration screen
+        context.go(RouteNames.userMode);
+
+        // Show informational snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text('Driver registration coming soon!'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.blue,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      log("SideNavigationBar: Error navigating to driver registration: $e");
+      if (context.mounted) {
+        _showErrorSnackBar(
+            context, 'Error opening driver registration: ${e.toString()}');
+      }
+    }
+  }
+
+  /// Builds the driver registration bottom sheet
+  Widget _buildDriverRegistrationBottomSheet(
+      BuildContext context, ProfileViewmodel profileViewModel) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24.0),
+              topRight: Radius.circular(24.0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12.0),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Icon(
+                              Icons.directions_car,
+                              color: Theme.of(context).primaryColor,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Become a Driver',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Start earning with MyDriveNepal',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.color
+                                            ?.withOpacity(0.7),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Benefits section
+                      Text(
+                        'Why Drive with Us?',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      _buildBenefitItem(
+                        context,
+                        Icons.attach_money,
+                        'Flexible Earnings',
+                        'Earn money on your own schedule',
+                      ),
+                      _buildBenefitItem(
+                        context,
+                        Icons.schedule,
+                        'Work When You Want',
+                        'No fixed hours, drive when convenient',
+                      ),
+                      _buildBenefitItem(
+                        context,
+                        Icons.security,
+                        'Safe & Secure',
+                        'Verified passengers and secure payments',
+                      ),
+                      _buildBenefitItem(
+                        context,
+                        Icons.support_agent,
+                        '24/7 Support',
+                        'Round-the-clock driver support',
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Requirements section
+                      Text(
+                        'Requirements',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      _buildRequirementItem(
+                        context,
+                        'Valid driver\'s license',
+                        'Must be at least 21 years old',
+                      ),
+                      _buildRequirementItem(
+                        context,
+                        'Clean driving record',
+                        'No major violations in the last 3 years',
+                      ),
+                      _buildRequirementItem(
+                        context,
+                        'Vehicle inspection',
+                        'Your vehicle must meet safety standards',
+                      ),
+                      _buildRequirementItem(
+                        context,
+                        'Background check',
+                        'Criminal background verification required',
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Action buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundedOutlinedButtonWidget(
+                              label: 'Not Now',
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: RoundedFilledButtonWidget(
+                                context: context,
+                                isLoading: profileViewModel
+                                    .assignRoleUseCase.isLoading,
+                                label: 'Get Started',
+                                onPressed: () async {
+                                  await profileViewModel.assignRole();
+                                  await profileViewModel.getUserData();
+                                  await profileViewModel.switchToDriverMode();
+                                  Navigator.of(context).pop(true);
+                                }),
+                          ),
+                        ],
+                      ),
+
+                      // Bottom padding for safe area
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  assignRiderRole(ProfileViewmodel profileViewModel) async {}
+
+  /// Builds a benefit item for the bottom sheet
+  Widget _buildBenefitItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String description,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Icon(
+              icon,
+              color: Theme.of(context).primaryColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.color
+                            ?.withOpacity(0.7),
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a requirement item for the bottom sheet
+  Widget _buildRequirementItem(
+    BuildContext context,
+    String title,
+    String description,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 4.0),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.color
+                            ?.withOpacity(0.7),
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

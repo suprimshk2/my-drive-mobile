@@ -50,4 +50,7 @@ abstract class ProfileRepository {
 
   /// Switch mode using role ID
   Future<bool> switchModeWithRoleId(String roleId);
+
+  // Assign role
+  Future<bool> assignRole(String roleId);
 }
