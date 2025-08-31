@@ -89,6 +89,14 @@ class DioApiClientImpl implements ApiClient {
       if (updateBaseUrl) {
         this.updateBaseUrl(_baseUrl);
       }
+      // if (e is DioException) {
+      //   await _onSessionExpired(e, ErrorInterceptorHandler());
+      //   print("e: $e");
+      //   // navigationRouter.goNamed(AppRoute.login.name);
+      // } else {
+      //   print("e: $e");
+      //   // navigationRouter.goNamed(AppRoute.login.name);
+      // }
       debugPrint(
           'API Error | Method: GET | Path: $path | Error: ${e.toString()}');
       rethrow;
@@ -238,7 +246,7 @@ class DioApiClientImpl implements ApiClient {
     final accessToken =
         await _sharedPrefManager.getString(LocalStorageKeys.ACCESS_TOKEN);
     if (accessToken != null) {
-      // _checkJwtExpiry(accessToken);
+      _checkJwtExpiry(accessToken);
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
 
@@ -249,17 +257,17 @@ class DioApiClientImpl implements ApiClient {
     return handler.next(options);
   }
 
-  // _checkJwtExpiry(String accessToken) {
-  //   try {
-  //     final jwtPayload =
-  //         JwtHelper.verify(accessToken, dotenv.env['JWT_SECRET']!);
-  //     debugPrint('jwt: $jwtPayload');
-  //   } on JWTExpiredException {
-  //     navigationRouter.goNamed(AppRoute.login.name);
-  //   } on JWTException catch (e) {
-  //     navigationRouter.goNamed(AppRoute.login.name);
-  //   }
-  // }
+  _checkJwtExpiry(String accessToken) {
+    try {
+      final jwtPayload =
+          JwtHelper.verify(accessToken, dotenv.env['JWT_SECRET']!);
+      debugPrint('jwt: $jwtPayload');
+    } on JWTExpiredException {
+      navigationRouter.goNamed(AppRoute.login.name);
+    } on JWTException catch (e) {
+      navigationRouter.goNamed(AppRoute.login.name);
+    }
+  }
 
   @override
   updateBaseUrl(String url) {
@@ -270,7 +278,8 @@ class DioApiClientImpl implements ApiClient {
     DioException exception,
     ErrorInterceptorHandler handler,
   ) async {
-    if (exception.response?.statusCode == HttpStatusCodes.Unauthorized.code) {
+    if (exception.response?.statusCode == HttpStatusCodes.Unauthorized.code ||
+        exception.response?.statusCode == HttpStatusCodes.Forbidden.code) {
       await _sharedPrefManager.remove(LocalStorageKeys.ACCESS_TOKEN);
       await _sharedPrefManager.remove(LocalStorageKeys.MEMBER_ID);
       await _sharedPrefManager.remove(LocalStorageKeys.DISCLAIMER_ACK);

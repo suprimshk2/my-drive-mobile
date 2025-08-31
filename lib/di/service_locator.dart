@@ -62,6 +62,13 @@ import '../feature/user-mode/user_mode.dart';
 import '../shared/shared.dart';
 import 'remote_config_service.dart';
 
+import 'package:mydrivenepal/feature/profile/data/models/user_mode_model.dart';
+import 'package:mydrivenepal/feature/profile/data/local/profile_local.dart';
+import 'package:mydrivenepal/feature/profile/data/local/profile_local_impl.dart';
+import 'package:mydrivenepal/feature/profile/data/profile_repository.dart';
+import 'package:mydrivenepal/feature/profile/data/profile_repository_impl.dart';
+import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
+
 GetIt locator = GetIt.instance;
 
 // TODO: Need to move registration to different files based on either feature or service type
@@ -354,10 +361,26 @@ Future setUpServiceLocator() async {
     ),
   );
 
-  locator.registerFactory<ProfileViewmodel>(
+  locator.registerLazySingleton<ProfileViewmodel>(
     () => ProfileViewmodel(
+      profileRepository: locator<ProfileRepository>(),
+    ),
+  );
+
+  // Profile Feature Registration
+  locator.registerLazySingleton<ProfileLocal>(
+    () => ProfileLocalImpl(
+      localStorageClient: locator<LocalStorageClient>(
+        instanceName: ServiceNames.SharedPrefManager,
+      ),
+    ),
+  );
+
+  locator.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      profileLocal: locator<ProfileLocal>(),
       profileRemote: locator<ProfileRemote>(),
-      authRepository: locator<AuthRepository>(),
+      authLocal: locator<AuthLocal>(), // Add this line
     ),
   );
 

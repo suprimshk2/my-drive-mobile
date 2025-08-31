@@ -62,7 +62,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _,
           ) {
             return ResponseBuilder<UserDataResponse>(
-              response: profileViewmodel.userDataUseCase,
+              response: profileViewmodel.userDataUseCase
+                  as Response<UserDataResponse>,
               onRetry: () {
                 getInitialData();
               },

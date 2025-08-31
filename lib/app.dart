@@ -3,6 +3,7 @@ import 'package:mydrivenepal/di/service_locator.dart' as di;
 
 import 'package:mydrivenepal/feature/auth/screen/login/developer_option_viewmodel.dart';
 import 'package:mydrivenepal/feature/banner/banner_viewmodel.dart';
+import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
 import 'package:mydrivenepal/feature/tasks/task_listing_viewmodel.dart';
 import 'package:mydrivenepal/feature/theme/theme_provider.dart';
 import 'package:mydrivenepal/feature/theme/theme_service.dart';
@@ -56,6 +57,7 @@ class _AppState extends State<App> {
         ChangeNotifierProvider(create: (ctx) => locator<BannerViewModel>()),
         ChangeNotifierProvider(
             create: (ctx) => locator<TaskListingViewmodel>()),
+        ChangeNotifierProvider(create: (ctx) => locator<ProfileViewmodel>()),
       ],
       builder: (ctx, child) {
         final themeService = locator<ThemeService>();

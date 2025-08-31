@@ -59,4 +59,10 @@ class RemoteAPIConstant {
 
   //Banner
   static String BANNERS = 'banners';
+
+  // Switch User Mode
+  static String SWITCH_USER_MODE = '/auth/switch-account';
+
+  // Fetch User Roles
+  static String FETCH_USER_ROLES = '/users/roles';
 }

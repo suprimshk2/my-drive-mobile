@@ -20,4 +20,15 @@ class LocalStorageKeys {
   static const String USER_MODE = "user_mode";
   static const String RIDE_HISTORY = "ride_history";
   static const String LAST_PICKUP_LOCATION = "last_pickup_location";
+  static const String currentUserMode = 'current_user_mode';
+  static const String availableUserModes = 'available_user_modes';
+  static const String isModeSwitchEnabled = 'is_mode_switch_enabled';
+  static const String currentMode = 'current_mode';
+  static const String availableModes = 'available_modes';
+  static const String isDriverMode = 'is_driver_mode';
+  static const String isPassengerMode = 'is_passenger_mode';
+  static const String canSwitchToDriver = 'can_switch_to_driver';
+  static const String canSwitchToPassenger = 'can_switch_to_passenger';
+  static const String userMode = 'user_mode';
+  static const String userRoles = 'user_roles';
 }

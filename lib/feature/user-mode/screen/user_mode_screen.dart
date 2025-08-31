@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:mydrivenepal/feature/user-mode/user_mode.dart';
 import 'package:mydrivenepal/widget/widget.dart';
 import 'package:mydrivenepal/di/service_locator.dart';
+// import 'package:mydrivenepal/router/route_names.dart';
 
 class UserModeScreen extends StatefulWidget {
   @override
@@ -18,6 +20,10 @@ class _UserModeScreenState extends State<UserModeScreen> {
   void initState() {
     super.initState();
     _userModeViewModel = locator<UserModeViewModel>();
+    final profileViewModel = locator<ProfileViewmodel>();
+    profileViewModel.getUserData();
+    profileViewModel.fetchUserRoles();
+
     _loadUserMode();
   }
 
@@ -29,27 +35,89 @@ class _UserModeScreenState extends State<UserModeScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UserModeViewModel>.value(
       value: _userModeViewModel,
-      child: Consumer<UserModeViewModel>(
-        builder: (context, userModeViewModel, child) {
-          log("Building UserModeScreen with currentMode: ${userModeViewModel.currentMode}");
+      child: Consumer<ProfileViewmodel>(
+          builder: (context, profileViewModel, child) {
+        return Consumer<UserModeViewModel>(
+          builder: (context, userModeViewModel, child) {
+            log("Building UserModeScreen with currentMode: ${userModeViewModel.currentMode}");
 
-          return ScaffoldWidget(
-            padding: 0,
-            // appbarTitle: _getModeSpecificTitle(userModeViewModel.currentMode),
-            showSideBar: true,
+            return ScaffoldWidget(
+              padding: 0,
+              showSideBar: true,
+              child: Column(
+                children: [
+                  // Mode-specific welcome message
+                  // _buildWelcomeMessage(userModeViewModel),
+
+                  // Main content
+                  Expanded(
+                    child: _buildModeSpecificContent(profileViewModel),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _buildWelcomeMessage(UserModeViewModel userModeViewModel) {
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            userModeViewModel.isDriverMode ? Colors.blue[50] : Colors.green[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: userModeViewModel.isDriverMode
+              ? Colors.blue[200]!
+              : Colors.green[200]!,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            userModeViewModel.isDriverMode
+                ? Icons.directions_car
+                : Icons.person,
+            color: userModeViewModel.isDriverMode
+                ? Colors.blue[700]
+                : Colors.green[700],
+            size: 24,
+          ),
+          SizedBox(width: 12),
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Test Mode Switcher (for testing purposes)
-                // _buildTestModeSwitcher(context, userModeViewModel),
-
-                // Main content
-                Expanded(
-                  child: _buildModeSpecificContent(userModeViewModel),
+                Text(
+                  'Welcome to ${userModeViewModel.currentMode.displayName} Mode',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: userModeViewModel.isDriverMode
+                        ? Colors.blue[700]
+                        : Colors.green[700],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  userModeViewModel.isDriverMode
+                      ? 'You can now accept rides and earn money'
+                      : 'You can now book rides and travel safely',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: userModeViewModel.isDriverMode
+                        ? Colors.blue[600]
+                        : Colors.green[600],
+                  ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -189,14 +257,14 @@ class _UserModeScreenState extends State<UserModeScreen> {
   //   );
   // }
 
-  Widget _buildModeSpecificContent(UserModeViewModel userModeViewModel) {
-    final currentMode = userModeViewModel.currentMode;
+  Widget _buildModeSpecificContent(ProfileViewmodel profileViewModel) {
+    final currentMode = profileViewModel.currentMode.value;
     log("Building mode-specific content for: $currentMode");
 
     switch (currentMode) {
-      case UserMode.passenger:
+      case 'passenger':
         return PassengerModeScreen();
-      case UserMode.driver:
+      case 'rider':
         return DriverModeScreen();
       default:
         return PassengerModeScreen(); // Default to passenger mode
@@ -214,33 +282,41 @@ class _UserModeScreenState extends State<UserModeScreen> {
     }
   }
 
-  Future<void> _switchToMode(BuildContext context,
-      UserModeViewModel userModeViewModel, UserMode newMode) async {
-    bool success;
-    if (newMode == UserMode.passenger) {
-      success = await userModeViewModel.switchToPassengerMode();
-    } else {
-      success = await userModeViewModel.switchToDriverMode();
-    }
+  // Future<void> _switchToMode(BuildContext context,
+  //     UserModeViewModel userModeViewModel, UserMode newMode) async {
+  //   try {
+  //     // Use ProfileViewmodel for role-based switching
+  //     final profileViewModel = locator<ProfileViewmodel>();
+  //     final success = await profileViewModel.switchMode(newMode);
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('✅ Switched to ${newMode.displayName}'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('❌ Failed to switch to ${newMode.displayName}'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
-  }
+  //     if (success) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('✅ Switched to ${newMode.displayName}'),
+  //           backgroundColor: Colors.green,
+  //           duration: Duration(seconds: 2),
+  //         ),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('❌ Failed to switch to ${newMode.displayName}'),
+  //           backgroundColor: Colors.red,
+  //           duration: Duration(seconds: 3),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     log("UserModeScreen: Error switching mode: $e");
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('❌ Error switching mode: ${e.toString()}'),
+  //         backgroundColor: Colors.red,
+  //         duration: Duration(seconds: 3),
+  //       ),
+  //     );
+  //   }
+  // }
 
   Future<void> _enableTestModes(
       BuildContext context, UserModeViewModel userModeViewModel) async {

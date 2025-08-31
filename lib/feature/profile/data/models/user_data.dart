@@ -80,6 +80,13 @@ class UserDataResponse {
       'roleNames': roleNames,
     };
   }
+
+  // Helper methods for user data
+  String get fullName => '${firstName ?? ''} ${lastName ?? ''}'.trim();
+  String get displayName => fullName.isNotEmpty ? fullName : email ?? '';
+  String? get profilePicture => providerData?.picture;
+  bool get hasProfilePicture =>
+      profilePicture != null && profilePicture!.isNotEmpty;
 }
 
 class Role {
@@ -114,6 +121,27 @@ class Role {
       'permissions': permissions,
     };
   }
+
+  // Helper methods for role validation
+  bool hasPermission(String permission) {
+    return permissions?.contains(permission) ?? false;
+  }
+
+  bool hasAnyPermission(List<String> requiredPermissions) {
+    return permissions
+            ?.any((permission) => requiredPermissions.contains(permission)) ??
+        false;
+  }
+
+  bool hasAllPermissions(List<String> requiredPermissions) {
+    return permissions
+            ?.every((permission) => requiredPermissions.contains(permission)) ??
+        false;
+  }
+
+  bool get isPassengerRole => name?.toLowerCase() == 'passenger';
+  bool get isDriverRole => name?.toLowerCase() == 'driver';
+  bool get isAdminRole => name?.toLowerCase() == 'admin';
 }
 
 class ProviderData {
