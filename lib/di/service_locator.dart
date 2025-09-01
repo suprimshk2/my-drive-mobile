@@ -68,6 +68,7 @@ import 'package:mydrivenepal/feature/profile/data/local/profile_local_impl.dart'
 import 'package:mydrivenepal/feature/profile/data/profile_repository.dart';
 import 'package:mydrivenepal/feature/profile/data/profile_repository_impl.dart';
 import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
+import 'package:mydrivenepal/feature/rider-registration/viewmodel/rider_registration_viewmodel.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -473,5 +474,10 @@ Future setUpServiceLocator() async {
     BannerViewModel(
       bannerRepo: locator<BannerRepo>(),
     ),
+  );
+
+  // Rider Registration Feature
+  locator.registerLazySingleton<RiderRegistrationViewModel>(
+    () => RiderRegistrationViewModel(),
   );
 }

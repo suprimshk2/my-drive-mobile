@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mydrivenepal/feature/dashboard/screen/ride_booking_screen.dart';
 import 'package:mydrivenepal/feature/episode/data/model/milestone_detail_screen_params.dart';
 import 'package:mydrivenepal/feature/episode/episode.dart';
+import 'package:mydrivenepal/feature/rider-registration/screen/rider_registration_screen.dart';
 import 'package:mydrivenepal/feature/tasks/data/model/status_model_for_callback.dart';
 import 'package:mydrivenepal/feature/tasks/screen/task-types/message_screen.dart';
 import 'package:mydrivenepal/feature/tasks/screen/task-types/signature_screen.dart';
@@ -21,6 +22,7 @@ import 'package:mydrivenepal/feature/tasks/screen/task-types/question_screen.dar
 import 'package:mydrivenepal/feature/tasks/screen/task-types/questionnaire_screen.dart';
 import 'package:mydrivenepal/feature/tasks/screen/task-types/todo_screen.dart';
 import 'package:mydrivenepal/shared/constant/route_names.dart';
+import 'package:provider/provider.dart';
 
 import '../di/service_locator.dart';
 import '../feature/auth/auth.dart';
@@ -35,6 +37,14 @@ import '../feature/request-eoc/screen/select_episode_screen.dart';
 import '../feature/request-eoc/screen/success_screen.dart';
 import '../feature/tasks/screen/task_screen.dart';
 import 'navigation_service.dart';
+import 'package:mydrivenepal/feature/rider-registration/model/rider_registration_model.dart';
+
+import 'package:mydrivenepal/feature/rider-registration/viewmodel/rider_registration_viewmodel.dart';
+import 'package:mydrivenepal/feature/rider-registration/widget/registration_step_item.dart';
+
+import 'package:mydrivenepal/feature/rider-registration/screen/basic_info_screen.dart';
+import 'package:mydrivenepal/feature/rider-registration/screen/driver_license_screen.dart';
+import 'package:mydrivenepal/feature/rider-registration/screen/vehicle_info_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final NavigationService navigationService = locator<NavigationService>();
@@ -172,6 +182,69 @@ final navigationRouter = GoRouter(
           context, state, const InformationScreen()),
       path: RouteNames.info,
       name: AppRoute.info.name,
+    ),
+
+    GoRoute(
+      pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+        context,
+        state,
+        ChangeNotifierProvider(
+          create: (context) => locator<RiderRegistrationViewModel>(),
+          child: const RiderRegistrationScreen(),
+        ),
+      ),
+      path: RouteNames.riderRegistration,
+      name: AppRoute.riderRegistration.name,
+      routes: [
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            Consumer<RiderRegistrationViewModel>(
+              builder: (context, viewModel, child) {
+                return ChangeNotifierProvider.value(
+                  value: viewModel,
+                  child: const BasicInfoScreen(),
+                );
+              },
+            ),
+          ),
+          path: 'basic-info',
+          name: AppRoute.riderBasicInfo.name,
+        ),
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            Consumer<RiderRegistrationViewModel>(
+              builder: (context, viewModel, child) {
+                return ChangeNotifierProvider.value(
+                  value: viewModel,
+                  child: const DriverLicenseScreen(),
+                );
+              },
+            ),
+          ),
+          path: 'driver-license',
+          name: AppRoute.riderDriverLicense.name,
+        ),
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            Consumer<RiderRegistrationViewModel>(
+              builder: (context, viewModel, child) {
+                return ChangeNotifierProvider.value(
+                  value: viewModel,
+                  child: const VehicleInfoScreen(),
+                );
+              },
+            ),
+          ),
+          path: 'vehicle-info',
+          name: AppRoute.riderVehicleInfo.name,
+        ),
+      ],
     ),
     // GoRoute(
     //   pageBuilder: (context, state) =>

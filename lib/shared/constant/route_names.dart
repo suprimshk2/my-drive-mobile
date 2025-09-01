@@ -41,6 +41,10 @@ class RouteNames {
   // user mode
   static const String userMode = '/user-mode';
   static const String mainDashboard = '/main-dashboard';
+  static const String riderRegistration = '/rider-registration';
+  static const String riderBasicInfo = '/rider-registration/basic-info';
+  static const String riderDriverLicense = '/rider-registration/driver-license';
+  static const String riderVehicleInfo = '/rider-registration/vehicle-info';
 }
 
 enum AppRoute {
@@ -72,4 +76,8 @@ enum AppRoute {
   message,
   mainDashboard,
   userMode,
+  riderRegistration,
+  riderBasicInfo,
+  riderDriverLicense,
+  riderVehicleInfo,
 }
