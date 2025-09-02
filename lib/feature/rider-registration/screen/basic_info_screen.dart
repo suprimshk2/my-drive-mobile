@@ -53,145 +53,142 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
   Widget build(BuildContext context) {
     final appColors = context.appColors;
 
-    return ChangeNotifierProvider.value(
-      value: context.read<RiderRegistrationViewModel>(),
-      child: ScaffoldWidget(
-        appbarTitle: "Basic Info",
-        showBackButton: true,
-        child: Consumer<RiderRegistrationViewModel>(
-          builder: (context, viewModel, child) {
-            return Padding(
-              padding: const EdgeInsets.all(Dimens.spacing_large),
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Profile Photo Section
-                    Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: _handlePhotoUpload,
-                            child: Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: appColors.bgGraySoft,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: appColors.borderGraySoftAlpha50,
-                                  width: 2,
-                                ),
+    return ScaffoldWidget(
+      appbarTitle: "Basic Info",
+      showBackButton: true,
+      child: Consumer<RiderRegistrationViewModel>(
+        builder: (context, viewModel, child) {
+          return Padding(
+            padding: const EdgeInsets.all(Dimens.spacing_large),
+            child: FormBuilder(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Photo Section
+                  Center(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _handlePhotoUpload,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: appColors.bgGraySoft,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: appColors.borderGraySoftAlpha50,
+                                width: 2,
                               ),
-                              child: viewModel.registrationData.profilePhoto
-                                          ?.isNotEmpty ==
-                                      true
-                                  ? ClipOval(
-                                      child: ImageWidget(
-                                        fit: BoxFit.cover,
-                                        imagePath: viewModel
-                                            .registrationData.profilePhoto!,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.camera_alt,
-                                      size: 40,
-                                      color: appColors.textSubtle,
-                                    ),
                             ),
-                          ),
-                          const SizedBox(height: Dimens.spacing_small),
-                          TextWidget(
-                            text: "Add profile photo",
-                            style:
-                                Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      color: appColors.textSubtle,
+                            child: viewModel.registrationData.profilePhoto
+                                        ?.isNotEmpty ==
+                                    true
+                                ? ClipOval(
+                                    child: ImageWidget(
+                                      fit: BoxFit.cover,
+                                      imagePath: viewModel
+                                          .registrationData.profilePhoto!,
                                     ),
+                                  )
+                                : Icon(
+                                    Icons.camera_alt,
+                                    size: 40,
+                                    color: appColors.textSubtle,
+                                  ),
                           ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: Dimens.spacing_large),
-
-                    // Form Fields
-                    TextFieldWidget(
-                      controller: _firstNameController,
-                      // labelText: "First name",
-                      label: "First name",
-                      // validator: FormBuilderValidators.compose([
-                      //   FormBuilderValidators.required(
-                      //       errorText: 'First name is required'),
-                      // ]),
-                      onChanged: (value) => _updateFormData(viewModel),
-                      name: 'firstName',
-                    ),
-
-                    const SizedBox(height: Dimens.spacing_large),
-
-                    TextFieldWidget(
-                      controller: _lastNameController,
-                      label: "Last name",
-                      // validator: FormBuilderValidators.compose([
-                      //   FormBuilderValidators.required(
-                      //       errorText: 'Last name is required'),
-                      // ]),
-                      onChanged: (value) => _updateFormData(viewModel),
-                      name: '',
-                    ),
-
-                    const SizedBox(height: Dimens.spacing_large),
-
-                    TextFieldWidget(
-                      controller: _emailController,
-                      label: "Email",
-                      textInputType: TextInputType.emailAddress,
-                      // validator: FormBuilderValidators.compose([
-                      //   FormBuilderValidators.required(
-                      //       errorText: 'Email is required'),
-                      //   FormBuilderValidators.email(
-                      //       errorText: 'Please enter a valid email'),
-                      // ]),
-                      onChanged: (value) => _updateFormData(viewModel),
-                      name: '',
-                    ),
-
-                    const SizedBox(height: Dimens.spacing_large),
-
-                    GestureDetector(
-                      onTap: _handleDatePicker,
-                      child: AbsorbPointer(
-                        child: TextFieldWidget(
-                          controller: _dateOfBirthController,
-                          label: "Date of birth",
-                          suffixIcon: Icons.calendar_today, name: 'dob',
-
-                          // validator: FormBuilderValidators.compose([
-                          //   FormBuilderValidators.required(
-                          //       errorText: 'Date of birth is required'),
-                          // ]),
                         ),
+                        const SizedBox(height: Dimens.spacing_small),
+                        TextWidget(
+                          text: "Add profile photo",
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    color: appColors.textSubtle,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: Dimens.spacing_large),
+
+                  // Form Fields
+                  TextFieldWidget(
+                    controller: _firstNameController,
+                    // labelText: "First name",
+                    label: "First name",
+                    // validator: FormBuilderValidators.compose([
+                    //   FormBuilderValidators.required(
+                    //       errorText: 'First name is required'),
+                    // ]),
+                    onChanged: (value) => _updateFormData(viewModel),
+                    name: 'firstName',
+                  ),
+
+                  const SizedBox(height: Dimens.spacing_large),
+
+                  TextFieldWidget(
+                    controller: _lastNameController,
+                    label: "Last name",
+                    // validator: FormBuilderValidators.compose([
+                    //   FormBuilderValidators.required(
+                    //       errorText: 'Last name is required'),
+                    // ]),
+                    onChanged: (value) => _updateFormData(viewModel),
+                    name: '',
+                  ),
+
+                  const SizedBox(height: Dimens.spacing_large),
+
+                  TextFieldWidget(
+                    controller: _emailController,
+                    label: "Email",
+                    textInputType: TextInputType.emailAddress,
+                    // validator: FormBuilderValidators.compose([
+                    //   FormBuilderValidators.required(
+                    //       errorText: 'Email is required'),
+                    //   FormBuilderValidators.email(
+                    //       errorText: 'Please enter a valid email'),
+                    // ]),
+                    onChanged: (value) => _updateFormData(viewModel),
+                    name: '',
+                  ),
+
+                  const SizedBox(height: Dimens.spacing_large),
+
+                  GestureDetector(
+                    onTap: _handleDatePicker,
+                    child: AbsorbPointer(
+                      child: TextFieldWidget(
+                        controller: _dateOfBirthController,
+                        label: "Date of birth",
+                        suffixIcon: Icons.calendar_today, name: 'dob',
+
+                        // validator: FormBuilderValidators.compose([
+                        //   FormBuilderValidators.required(
+                        //       errorText: 'Date of birth is required'),
+                        // ]),
                       ),
                     ),
+                  ),
 
-                    const Spacer(),
+                  const Spacer(),
 
-                    // Next Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: RoundedFilledButtonWidget(
-                        onPressed: () => _handleNext(context),
-                        label: "Next",
-                        context: context,
-                      ),
+                  // Next Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: RoundedFilledButtonWidget(
+                      onPressed: () => _handleNext(context),
+                      label: "Next",
+                      context: context,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

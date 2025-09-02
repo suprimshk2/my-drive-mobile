@@ -27,7 +27,7 @@ class NavigationService {
     if (isFirstTime) {
       initialRoute = RouteNames.onBoarding;
     } else if (isNotEmpty(token)) {
-      initialRoute = RouteNames.riderRegistration;
+      initialRoute = RouteNames.userMode;
     } else {
       initialRoute = RouteNames.login;
     }

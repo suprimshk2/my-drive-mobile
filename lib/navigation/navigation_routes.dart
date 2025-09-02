@@ -184,69 +184,120 @@ final navigationRouter = GoRouter(
       name: AppRoute.info.name,
     ),
 
-    GoRoute(
-      pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+    // GoRoute(
+    //   pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+    //     context,
+    //     state,
+    //     ChangeNotifierProvider(
+    //       create: (context) => locator<RiderRegistrationViewModel>(),
+    //       child:
+    //        const RiderRegistrationScreen(),
+    //     ),
+    //   ),
+    //   path: RouteNames.riderRegistration,
+    //   name: AppRoute.riderRegistration.name,
+    //   routes: [
+    //     GoRoute(
+    //       pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+    //         context,
+    //         state,
+    //         Consumer<RiderRegistrationViewModel>(
+    //           builder: (context, viewModel, child) {
+    //             return ChangeNotifierProvider.value(
+    //               value: viewModel,
+    //               child: const BasicInfoScreen(),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       path: 'basic-info',
+    //       name: AppRoute.riderBasicInfo.name,
+    //     ),
+    //     GoRoute(
+    //       pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+    //         context,
+    //         state,
+    //         Consumer<RiderRegistrationViewModel>(
+    //           builder: (context, viewModel, child) {
+    //             return ChangeNotifierProvider.value(
+    //               value: viewModel,
+    //               child: const DriverLicenseScreen(),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       path: 'driver-license',
+    //       name: AppRoute.riderDriverLicense.name,
+    //     ),
+    //     GoRoute(
+    //       pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+    //         context,
+    //         state,
+    //         Consumer<RiderRegistrationViewModel>(
+    //           builder: (context, viewModel, child) {
+    //             return ChangeNotifierProvider.value(
+    //               value: viewModel,
+    //               child: const VehicleInfoScreen(),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       path: 'vehicle-info',
+    //       name: AppRoute.riderVehicleInfo.name,
+    //     ),
+    //   ],
+    // ),
+    ShellRoute(
+      pageBuilder: (context, state, child) =>
+          horizontalSlideTransitionNavigation(
         context,
         state,
         ChangeNotifierProvider(
           create: (context) => locator<RiderRegistrationViewModel>(),
-          child: const RiderRegistrationScreen(),
+          child: child, // This will be the child route
         ),
       ),
-      path: RouteNames.riderRegistration,
-      name: AppRoute.riderRegistration.name,
       routes: [
         GoRoute(
           pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
             context,
             state,
-            Consumer<RiderRegistrationViewModel>(
-              builder: (context, viewModel, child) {
-                return ChangeNotifierProvider.value(
-                  value: viewModel,
-                  child: const BasicInfoScreen(),
-                );
-              },
-            ),
+            const RiderRegistrationScreen(),
           ),
-          path: 'basic-info',
+          path: RouteNames.riderRegistration,
+          name: AppRoute.riderRegistration.name,
+        ),
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            const BasicInfoScreen(),
+          ),
+          path: '${RouteNames.riderRegistration}/basic-info',
           name: AppRoute.riderBasicInfo.name,
         ),
         GoRoute(
           pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
             context,
             state,
-            Consumer<RiderRegistrationViewModel>(
-              builder: (context, viewModel, child) {
-                return ChangeNotifierProvider.value(
-                  value: viewModel,
-                  child: const DriverLicenseScreen(),
-                );
-              },
-            ),
+            const DriverLicenseScreen(),
           ),
-          path: 'driver-license',
+          path: '${RouteNames.riderRegistration}/driver-license',
           name: AppRoute.riderDriverLicense.name,
         ),
         GoRoute(
           pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
             context,
             state,
-            Consumer<RiderRegistrationViewModel>(
-              builder: (context, viewModel, child) {
-                return ChangeNotifierProvider.value(
-                  value: viewModel,
-                  child: const VehicleInfoScreen(),
-                );
-              },
-            ),
+            const VehicleInfoScreen(),
           ),
-          path: 'vehicle-info',
+          path: '${RouteNames.riderRegistration}/vehicle-info',
           name: AppRoute.riderVehicleInfo.name,
         ),
       ],
     ),
-    // GoRoute(
+
+    // // GoRoute(
     //   pageBuilder: (context, state) =>
     //       fadeTransitionNavigation(context, state, const LoginScreen()),
     //   path: RouteNames.login,

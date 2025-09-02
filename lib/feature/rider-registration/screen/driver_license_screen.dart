@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mydrivenepal/widget/picker/media/media_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
@@ -216,7 +217,16 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
           RoundedFilledButtonWidget(
             context: context,
             label: "Add a photo",
-            onPressed: () => _handlePhotoUpload('driverLicense'),
+            onPressed: () => showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                  height: Dimens.spacing_100 + Dimens.spacing_50,
+                  padding: const EdgeInsets.all(Dimens.spacing_default),
+                  child: const MediaPickerWidget(),
+                );
+              },
+            ),
             backgroundColor: AppColors.transparent,
             textColor: appColors.primary.main,
             // borderColor: appColors.primary.main,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:http_interceptor/http_interceptor.dart' as http;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:mydrivenepal/feature/home/data/model/app_version_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../../feature/theme/theme_provider.dart';
 
 ThemeMode themeModeEnumFromString(String themeMode) {
@@ -231,4 +232,40 @@ String getFullName({
       .where((name) => name != null && name.trim().isNotEmpty)
       .join(' ');
   return fullname.trim();
+}
+
+pickImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(
+    source: ImageSource.camera,
+    imageQuality: 25,
+  );
+  return await cropImage(photo?.path ?? '');
+}
+
+pickImageFromAlbum() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? photo =
+      await picker.pickImage(source: ImageSource.gallery, imageQuality: 25);
+  return await cropImage(photo?.path ?? '');
+}
+
+cropImage(path) async {
+  final CroppedFile? croppedFile = await ImageCropper().cropImage(
+    sourcePath: path,
+    compressQuality: 1,
+    uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: 'Cropper',
+        toolbarColor: Colors.deepOrange,
+        toolbarWidgetColor: Colors.white,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: false,
+      ),
+      IOSUiSettings(
+        title: 'Cropper',
+      ),
+    ],
+  );
+  return croppedFile?.path ?? '';
 }

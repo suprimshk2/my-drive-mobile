@@ -477,7 +477,7 @@ Future setUpServiceLocator() async {
   );
 
   // Rider Registration Feature
-  locator.registerLazySingleton<RiderRegistrationViewModel>(
+  locator.registerFactory<RiderRegistrationViewModel>(
     () => RiderRegistrationViewModel(),
   );
 }

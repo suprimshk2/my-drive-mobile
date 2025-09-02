@@ -246,7 +246,7 @@ class DioApiClientImpl implements ApiClient {
     final accessToken =
         await _sharedPrefManager.getString(LocalStorageKeys.ACCESS_TOKEN);
     if (accessToken != null) {
-      _checkJwtExpiry(accessToken);
+      // _checkJwtExpiry(accessToken);
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
 
