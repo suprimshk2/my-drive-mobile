@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:mydrivenepal/feature/user-mode/user_mode.dart';
 import 'package:mydrivenepal/widget/widget.dart';
 import 'package:mydrivenepal/di/service_locator.dart';
+import 'package:mydrivenepal/feature/user-mode/passenger_mode_viewmodel.dart';
 // import 'package:mydrivenepal/router/route_names.dart';
 
 class UserModeScreen extends StatefulWidget {
@@ -263,11 +264,17 @@ class _UserModeScreenState extends State<UserModeScreen> {
 
     switch (currentMode) {
       case 'passenger':
-        return PassengerModeScreen();
+        return ChangeNotifierProvider<PassengerModeViewModel>(
+          create: (_) => locator<PassengerModeViewModel>(),
+          child: PassengerModeScreen(),
+        );
       case 'rider':
         return DriverModeScreen();
       default:
-        return PassengerModeScreen(); // Default to passenger mode
+        return ChangeNotifierProvider<PassengerModeViewModel>(
+          create: (_) => locator<PassengerModeViewModel>(),
+          child: PassengerModeScreen(), // Default to passenger mode
+        );
     }
   }
 
