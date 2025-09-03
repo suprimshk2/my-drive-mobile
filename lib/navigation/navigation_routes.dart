@@ -10,6 +10,8 @@ import 'package:mydrivenepal/feature/dashboard/screen/ride_booking_screen.dart';
 import 'package:mydrivenepal/feature/episode/data/model/milestone_detail_screen_params.dart';
 import 'package:mydrivenepal/feature/episode/episode.dart';
 import 'package:mydrivenepal/feature/rider-registration/screen/rider_registration_screen.dart';
+import 'package:mydrivenepal/feature/rider-registration/screen/vechicle_photo_screen.dart';
+import 'package:mydrivenepal/feature/rider-registration/screen/vehicle_doc_screen.dart';
 import 'package:mydrivenepal/feature/tasks/data/model/status_model_for_callback.dart';
 import 'package:mydrivenepal/feature/tasks/screen/task-types/message_screen.dart';
 import 'package:mydrivenepal/feature/tasks/screen/task-types/signature_screen.dart';
@@ -293,6 +295,24 @@ final navigationRouter = GoRouter(
           ),
           path: '${RouteNames.riderRegistration}/vehicle-info',
           name: AppRoute.riderVehicleInfo.name,
+        ),
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            const VehicleDocScreen(),
+          ),
+          path: '${RouteNames.riderRegistration}/vehicle-doc',
+          name: AppRoute.riderVehicleDoc.name,
+        ),
+        GoRoute(
+          pageBuilder: (context, state) => horizontalSlideTransitionNavigation(
+            context,
+            state,
+            const VehiclePhotoScreen(),
+          ),
+          path: '${RouteNames.riderRegistration}/vehicle-photo',
+          name: AppRoute.riderVehiclePhoto.name,
         ),
       ],
     ),

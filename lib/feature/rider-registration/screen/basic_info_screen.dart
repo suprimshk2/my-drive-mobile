@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mydrivenepal/shared/theme/app_text_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -21,10 +23,19 @@ class BasicInfoScreen extends StatefulWidget {
 
 class _BasicInfoScreenState extends State<BasicInfoScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _dateOfBirthController = TextEditingController();
+
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
+
+  final AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
+  final FocusNode firstNameFocusNode = FocusNode();
+  final FocusNode lastNameFocusNode = FocusNode();
+  final FocusNode phoneFocusNode = FocusNode();
+  final FocusNode emailFocusNode = FocusNode();
+  final FocusNode dobFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -42,192 +53,233 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _dateOfBirthController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    dateOfBirthController.dispose();
     super.dispose();
+  }
+
+  handleDatePicker() async {
+    DateTime? date = await openDatePicker(
+      context,
+    );
+    if (date != null) {
+      dateOfBirthController.text = formatRegisterDate(date.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final appColors = context.appColors;
 
-    return ScaffoldWidget(
-      appbarTitle: "Basic Info",
-      showBackButton: true,
-      child: Consumer<RiderRegistrationViewModel>(
-        builder: (context, viewModel, child) {
-          return Padding(
-            padding: const EdgeInsets.all(Dimens.spacing_large),
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Photo Section
-                  Center(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: _handlePhotoUpload,
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              color: appColors.bgGraySoft,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: appColors.borderGraySoftAlpha50,
-                                width: 2,
-                              ),
-                            ),
-                            child: viewModel.registrationData.profilePhoto
-                                        ?.isNotEmpty ==
-                                    true
-                                ? ClipOval(
-                                    child: ImageWidget(
-                                      fit: BoxFit.cover,
-                                      imagePath: viewModel
-                                          .registrationData.profilePhoto!,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.camera_alt,
-                                    size: 40,
-                                    color: appColors.textSubtle,
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.spacing_small),
-                        TextWidget(
-                          text: "Add profile photo",
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: appColors.textSubtle,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: Dimens.spacing_large),
-
-                  // Form Fields
-                  TextFieldWidget(
-                    controller: _firstNameController,
-                    // labelText: "First name",
-                    label: "First name",
-                    // validator: FormBuilderValidators.compose([
-                    //   FormBuilderValidators.required(
-                    //       errorText: 'First name is required'),
-                    // ]),
-                    onChanged: (value) => _updateFormData(viewModel),
-                    name: 'firstName',
-                  ),
-
-                  const SizedBox(height: Dimens.spacing_large),
-
-                  TextFieldWidget(
-                    controller: _lastNameController,
-                    label: "Last name",
-                    // validator: FormBuilderValidators.compose([
-                    //   FormBuilderValidators.required(
-                    //       errorText: 'Last name is required'),
-                    // ]),
-                    onChanged: (value) => _updateFormData(viewModel),
-                    name: '',
-                  ),
-
-                  const SizedBox(height: Dimens.spacing_large),
-
-                  TextFieldWidget(
-                    controller: _emailController,
-                    label: "Email",
-                    textInputType: TextInputType.emailAddress,
-                    // validator: FormBuilderValidators.compose([
-                    //   FormBuilderValidators.required(
-                    //       errorText: 'Email is required'),
-                    //   FormBuilderValidators.email(
-                    //       errorText: 'Please enter a valid email'),
-                    // ]),
-                    onChanged: (value) => _updateFormData(viewModel),
-                    name: '',
-                  ),
-
-                  const SizedBox(height: Dimens.spacing_large),
-
-                  GestureDetector(
-                    onTap: _handleDatePicker,
-                    child: AbsorbPointer(
-                      child: TextFieldWidget(
-                        controller: _dateOfBirthController,
-                        label: "Date of birth",
-                        suffixIcon: Icons.calendar_today, name: 'dob',
-
-                        // validator: FormBuilderValidators.compose([
-                        //   FormBuilderValidators.required(
-                        //       errorText: 'Date of birth is required'),
-                        // ]),
+    return Consumer<RiderRegistrationViewModel>(
+        builder: (context, viewModel, child) => ScaffoldWidget(
+              onPressedIcon: () => context.pop(),
+              showAppbar: true,
+              showBackButton: true,
+              appbarTitle: 'Basic Info',
+              child: SingleChildScrollView(
+                child: FormBuilder(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextWidget(
+                        text: 'Name',
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .copyWith(color: appColors.textSubtle),
                       ),
-                    ),
+                      const SizedBox(height: Dimens.spacing_8),
+                      TextFieldWidget(
+                        textInputAction: TextInputAction.next,
+                        focusNode: firstNameFocusNode,
+                        nextNode: lastNameFocusNode,
+                        name: "firstName",
+                        hintText: "First Name",
+                        controller: firstNameController,
+                        isRequired: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                      const SizedBox(height: Dimens.spacing_8),
+                      TextFieldWidget(
+                        textInputAction: TextInputAction.next,
+                        focusNode: lastNameFocusNode,
+                        nextNode: dobFocusNode,
+                        name: "lastName",
+                        hintText: "Last Name",
+                        controller: lastNameController,
+                        isRequired: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                      const SizedBox(height: Dimens.spacing_large),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextWidget(
+                            text: "Date of Birth",
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption
+                                .copyWith(color: appColors.textSubtle),
+                          ),
+                          TextWidget(
+                            text: "MM/DD/YY",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyTextSmall
+                                .copyWith(color: appColors.textMuted),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: Dimens.spacing_8),
+                      TextFieldWidget(
+                        focusNode: dobFocusNode,
+                        nextNode: phoneFocusNode,
+                        textInputAction: TextInputAction.next,
+                        onTap: handleDatePicker,
+                        borderColor: appColors.gray.soft,
+                        hintText: "--/--/--",
+                        name: "dateOfBirth",
+                        controller: dateOfBirthController,
+                        isRequired: true,
+                        autoFocus: false,
+                        readOnly: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                      const SizedBox(height: Dimens.spacing_large),
+                      TextWidget(
+                        text: 'Contact Information',
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .copyWith(color: appColors.textSubtle),
+                      ),
+                      const SizedBox(height: Dimens.spacing_8),
+                      TextFieldWidget(
+                        inputFormat: [TextFieldMaskings.phoneNumberMasking],
+                        textInputAction: TextInputAction.next,
+                        focusNode: phoneFocusNode,
+                        nextNode: emailFocusNode,
+                        name: "phone",
+                        hintText: "Phone Number",
+                        controller: phoneController,
+                        isRequired: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: [
+                          FormBuilderValidators.minLength(
+                            14,
+                            errorText: "Invalid phone number",
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: Dimens.spacing_8),
+                      TextFieldWidget(
+                        textInputAction: TextInputAction.next,
+                        focusNode: emailFocusNode,
+                        name: "email",
+                        hintText: "Email",
+                        controller: emailController,
+                        isRequired: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: [
+                          FormBuilderValidators.email(
+                            errorText: "Invalid email address",
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: Dimens.spacing_large),
+                      SizedBox(height: 100.h),
+                      RoundedFilledButtonWidget(
+                        context: context,
+                        label: "Continue",
+                        onPressed: () => observeResponse(context, viewModel),
+                      ),
+                      const SizedBox(height: Dimens.spacing_large),
+                    ],
                   ),
-
-                  const Spacer(),
-
-                  // Next Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: RoundedFilledButtonWidget(
-                      onPressed: () => _handleNext(context),
-                      label: "Next",
-                      context: context,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
-    );
+            ));
   }
 
-  void _updateFormData(RiderRegistrationViewModel viewModel) {
-    viewModel.updateBasicInfo(
-      firstName: _firstNameController.text,
-      lastName: _lastNameController.text,
-      email: _emailController.text,
-      dateOfBirth: _dateOfBirthController.text,
-    );
-  }
-
-  void _handlePhotoUpload() {
-    // TODO: Implement photo upload functionality
-    // This would typically open image picker and upload to server
-  }
-
-  void _handleDatePicker() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate:
-          DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
-      firstDate:
-          DateTime.now().subtract(const Duration(days: 36500)), // 100 years ago
-      lastDate:
-          DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
-    );
-
-    if (picked != null) {
-      _dateOfBirthController.text =
-          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-      _updateFormData(context.read<RiderRegistrationViewModel>());
+  bool validate() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      return true;
+    } else {
+      return false;
     }
   }
 
-  void _handleNext(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
+  observeResponse(
+    BuildContext context,
+    RiderRegistrationViewModel viewModel,
+  ) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    if (validate()) {
+      viewModel.updateBasicInfo(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        dateOfBirth: dateOfBirthController.text,
+        email: emailController.text,
+      );
+      // viewModel.setPersonalInfo(
+      //   firstName: firstNameController.text,
+      //   lastName: lastNameController.text,
+      //   dob: (dateOfBirthController.text),
+      //   subscriberId: subscriberIDController.text,
+      //   phone: phoneController.text,
+      //   email: emailController.text,
+      //   contactVia: _selectedContactMethod,
+      // );
+      //TODO: refactor using go router navigation
       context.pop();
     }
   }
 }
+
+  // void _updateFormData(RiderRegistrationViewModel viewModel) {
+  //   viewModel.updateBasicInfo(
+  //     firstName:  firstNameController.text,
+  //     lastName: lastNameController.text,
+  //     email: emailController.text,
+  //     dateOfBirth: dateOfBirthController.text,
+  //   );
+  // }
+
+  // void _handlePhotoUpload() {
+  //   // TODO: Implement photo upload functionality
+  //   // This would typically open image picker and upload to server
+  // }
+
+  // void _handleDatePicker() async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate:
+  //         DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
+  //     firstDate:
+  //         DateTime.now().subtract(const Duration(days: 36500)), // 100 years ago
+  //     lastDate:
+  //         DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
+  //   );
+
+  //   if (picked != null) {
+  //     _dateOfBirthController.text =
+  //         "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+  //     _updateFormData(context.read<RiderRegistrationViewModel>());
+  //   }
+  // }
+
+  // void _handleNext(BuildContext context) {
+  //   if (_formKey.currentState!.validate()) {
+  //     context.pop();
+  //   }
+  // }
+

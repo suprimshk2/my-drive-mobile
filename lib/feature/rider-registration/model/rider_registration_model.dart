@@ -10,7 +10,10 @@ class RiderRegistrationModel {
   final String? vehicleBrand;
   final String? vehiclePhoto;
   final String? registrationPlate;
-  final String? billbookPhoto;
+  final String? vehicleRegistrationNumberPhoto;
+  final String? vehicleRegistrationDetailsPhoto;
+  final String? vehicleProductionYear;
+  final String? vehicleType;
 
   RiderRegistrationModel({
     this.firstName,
@@ -24,7 +27,10 @@ class RiderRegistrationModel {
     this.vehicleBrand,
     this.vehiclePhoto,
     this.registrationPlate,
-    this.billbookPhoto,
+    this.vehicleRegistrationNumberPhoto,
+    this.vehicleRegistrationDetailsPhoto,
+    this.vehicleProductionYear,
+    this.vehicleType,
   });
 
   RiderRegistrationModel copyWith({
@@ -39,7 +45,10 @@ class RiderRegistrationModel {
     String? vehicleBrand,
     String? vehiclePhoto,
     String? registrationPlate,
-    String? billbookPhoto,
+    String? vehicleRegistrationNumberPhoto,
+    String? vehicleRegistrationDetailsPhoto,
+    String? vehicleProductionYear,
+    String? vehicleType,
   }) {
     return RiderRegistrationModel(
       firstName: firstName ?? this.firstName,
@@ -54,7 +63,13 @@ class RiderRegistrationModel {
       vehicleBrand: vehicleBrand ?? this.vehicleBrand,
       vehiclePhoto: vehiclePhoto ?? this.vehiclePhoto,
       registrationPlate: registrationPlate ?? this.registrationPlate,
-      billbookPhoto: billbookPhoto ?? this.billbookPhoto,
+      vehicleRegistrationNumberPhoto:
+          vehicleRegistrationNumberPhoto ?? this.vehicleRegistrationNumberPhoto,
+      vehicleRegistrationDetailsPhoto: vehicleRegistrationDetailsPhoto ??
+          this.vehicleRegistrationDetailsPhoto,
+      vehicleProductionYear:
+          vehicleProductionYear ?? this.vehicleProductionYear,
+      vehicleType: vehicleType ?? this.vehicleType,
     );
   }
 
@@ -71,8 +86,11 @@ class RiderRegistrationModel {
   bool get isVehicleInfoComplete =>
       vehicleBrand?.isNotEmpty == true &&
       vehiclePhoto?.isNotEmpty == true &&
+      vehicleType?.isNotEmpty == true &&
       registrationPlate?.isNotEmpty == true &&
-      billbookPhoto?.isNotEmpty == true;
+      vehicleRegistrationNumberPhoto?.isNotEmpty == true &&
+      vehicleRegistrationDetailsPhoto?.isNotEmpty == true &&
+      vehicleProductionYear?.isNotEmpty == true;
 
   bool get isRegistrationComplete =>
       isBasicInfoComplete && isDriverLicenseComplete && isVehicleInfoComplete;

@@ -24,53 +24,50 @@ class RegistrationStepItem extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
         border: Border(
           bottom: BorderSide(
-            color: appColors.borderGraySoftAlpha50,
+            color: appColors.borderGraySoft,
             width: 1,
           ),
         ),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: Dimens.spacing_large,
-          vertical: Dimens.spacing_12,
+          vertical: Dimens.spacing_2,
         ),
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isCompleted) ...[
-              Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: appColors.success.main,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check,
-                  color: AppColors.white,
-                  size: 14,
-                ),
-              ),
-              const SizedBox(width: Dimens.spacing_12),
-            ],
             Expanded(
-              child: TextWidget(
-                text: title,
-                style: Theme.of(context).textTheme.bodyText.copyWith(
-                      color: appColors.textInverse,
-                      fontWeight:
-                          isActive ? FontWeight.w600 : FontWeight.normal,
-                    ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextWidget(
+                  text: title,
+                  style: Theme.of(context).textTheme.caption.copyWith(
+                        color: appColors.textInverse,
+                      ),
+                ),
               ),
             ),
+            if (isCompleted) ...[
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  color: appColors.success.main,
+                  Icons.check_circle_outline,
+                  size: Dimens.spacing_large,
+                ),
+              ),
+            ],
           ],
         ),
         trailing: Icon(
           Icons.arrow_forward_ios,
-          color: appColors.textMuted,
-          size: 16,
+          color: appColors.bgGrayMain,
+          size: Dimens.spacing_12,
         ),
         onTap: onTap,
       ),

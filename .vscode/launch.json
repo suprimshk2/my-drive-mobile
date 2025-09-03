@@ -5,7 +5,7 @@
       "name": "MyDriveNepal",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release",
+      "flutterMode": "debug",
       "args": [
         "--flavor",
         "mydrivenepal",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mydrivenepal/di/service_locator.dart';
+import 'package:mydrivenepal/shared/theme/app_text_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mydrivenepal/shared/shared.dart';
@@ -67,19 +68,19 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                                 .registrationData.isBasicInfoComplete &&
                             !viewModel.registrationData.isDriverLicenseComplete,
                       ),
-                      RegistrationStepItem(
-                        title: "Selfie with ID",
-                        onTap: () =>
-                            context.pushNamed(AppRoute.riderDriverLicense.name),
-                        isCompleted: viewModel.registrationData
-                                .nationalIdFrontPhoto?.isNotEmpty ==
-                            true,
-                        isActive: viewModel
-                                .registrationData.isDriverLicenseComplete &&
-                            viewModel.registrationData.nationalIdFrontPhoto
-                                    ?.isEmpty ==
-                                true,
-                      ),
+                      // RegistrationStepItem(
+                      //   title: "Selfie with ID",
+                      //   onTap: () =>
+                      //       context.pushNamed(AppRoute.riderDriverLicense.name),
+                      //   isCompleted: viewModel.registrationData
+                      //           .nationalIdFrontPhoto?.isNotEmpty ==
+                      //       true,
+                      //   isActive: viewModel
+                      //           .registrationData.isDriverLicenseComplete &&
+                      //       viewModel.registrationData.nationalIdFrontPhoto
+                      //               ?.isEmpty ==
+                      //           true,
+                      // ),
                       RegistrationStepItem(
                         title: "Vehicle Info",
                         onTap: () =>
@@ -116,14 +117,12 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                   ),
                 ),
 
-                const SizedBox(height: Dimens.spacing_extra_large),
+                Spacer(),
 
                 // Terms and Conditions
                 TextWidget(
                   text: 'By tapping «Submit» you agree with our ',
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: appColors.textSubtle,
-                      ),
+                  style: Theme.of(context).textTheme.caption.copyWith(),
                   textAlign: TextAlign.center,
                 ),
                 Row(
@@ -135,7 +134,7 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                       },
                       child: TextWidget(
                         text: 'Terms and Conditions',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        style: Theme.of(context).textTheme.caption!.copyWith(
                               color: appColors.primary.main,
                               decoration: TextDecoration.underline,
                             ),
@@ -143,9 +142,7 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                     ),
                     TextWidget(
                       text: ' and ',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: appColors.textSubtle,
-                          ),
+                      style: Theme.of(context).textTheme.caption!.copyWith(),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -153,7 +150,7 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                       },
                       child: TextWidget(
                         text: 'Privacy Policy',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        style: Theme.of(context).textTheme.caption!.copyWith(
                               color: appColors.primary.main,
                               decoration: TextDecoration.underline,
                             ),

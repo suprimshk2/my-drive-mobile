@@ -45,6 +45,8 @@ class RouteNames {
   static const String riderBasicInfo = '/rider-registration/basic-info';
   static const String riderDriverLicense = '/rider-registration/driver-license';
   static const String riderVehicleInfo = '/rider-registration/vehicle-info';
+  static const String riderVehicleDoc = '/rider-registration/vehicle-doc';
+  static const String riderVehiclePhoto = '/rider-registration/vehicle-photo';
 }
 
 enum AppRoute {
@@ -80,4 +82,6 @@ enum AppRoute {
   riderBasicInfo,
   riderDriverLicense,
   riderVehicleInfo,
+  riderVehicleDoc,
+  riderVehiclePhoto,
 }

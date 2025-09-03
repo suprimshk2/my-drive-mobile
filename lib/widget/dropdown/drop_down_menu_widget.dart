@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:mydrivenepal/shared/shared.dart';
 import 'package:mydrivenepal/shared/theme/app_colors_theme_extension.dart';
+import 'package:mydrivenepal/widget/text/text_widget.dart';
 
 class DropDownMenuWidget<T> extends StatelessWidget {
   const DropDownMenuWidget({
@@ -49,9 +50,9 @@ class DropDownMenuWidget<T> extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: SizeConfig.screenHeight * 0.01,
-        ),
+        // SizedBox(
+        //   height: SizeConfig.screenHeight * 0.01,
+        // ),
         SizedBox(
           height: 75,
           child: FormBuilderDropdown<T>(
@@ -64,6 +65,22 @@ class DropDownMenuWidget<T> extends StatelessWidget {
             initialValue: value,
             onChanged: (value) {
               onChanged(value);
+            },
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: appColors.borderGraySoftAlpha50,
+            ),
+            selectedItemBuilder: (BuildContext context) {
+              return items.map<Widget>((DropdownMenuItem<T> item) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextWidget(
+                    textAlign: TextAlign.start,
+                    text: item.value?.toString() ?? '',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
+                  ),
+                );
+              }).toList();
             },
             dropdownColor: AppColors.white,
             decoration: InputDecoration(
@@ -79,28 +96,29 @@ class DropDownMenuWidget<T> extends StatelessWidget {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(Dimens.radius_large),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                  color: appColors.borderGraySoftAlpha50,
+                  color: appColors
+                      .bgGrayMain, // Changed from bgGraySoft to bgGraySubtle
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(Dimens.radius_large),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                   color: appColors.bgPrimaryMain,
                   width: 1,
                 ),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(Dimens.radius_large),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                   color: appColors.error.main,
                   width: 1,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(Dimens.radius_large),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                   color: appColors.error.main,
                   width: 1,

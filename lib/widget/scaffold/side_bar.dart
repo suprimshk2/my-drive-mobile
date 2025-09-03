@@ -894,10 +894,11 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
                                     .assignRoleUseCase.isLoading,
                                 label: 'Get Started',
                                 onPressed: () async {
-                                  await profileViewModel.assignRole();
-                                  await profileViewModel.getUserData();
-                                  await profileViewModel.switchToDriverMode();
-                                  Navigator.of(context).pop(true);
+                                  context.push(RouteNames.riderRegistration);
+                                  // await profileViewModel.assignRole();
+                                  // await profileViewModel.getUserData();
+                                  // await profileViewModel.switchToDriverMode();
+                                  // Navigator.of(context).pop(true);
                                 }),
                           ),
                         ],

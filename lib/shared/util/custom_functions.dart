@@ -269,3 +269,7 @@ cropImage(path) async {
   );
   return croppedFile?.path ?? '';
 }
+
+bool isKeyboardVisible(BuildContext context) {
+  return MediaQuery.of(context).viewInsets.bottom > 0;
+}

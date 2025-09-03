@@ -12,30 +12,30 @@ import 'package:mydrivenepal/widget/text-field/text_field_widget.dart';
 import 'package:mydrivenepal/widget/image/image_widget.dart';
 import '../viewmodel/rider_registration_viewmodel.dart';
 
-class DriverLicenseScreen extends StatefulWidget {
-  const DriverLicenseScreen({Key? key}) : super(key: key);
+class VehicleDocScreen extends StatefulWidget {
+  const VehicleDocScreen({super.key});
 
   @override
-  State<DriverLicenseScreen> createState() => _DriverLicenseScreenState();
+  State<VehicleDocScreen> createState() => _VehicleDocScreenState();
 }
 
-class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
+class _VehicleDocScreenState extends State<VehicleDocScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  final _driverLicenseController = TextEditingController();
+  final _vehicleProductionYearController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = context.read<RiderRegistrationViewModel>();
-      _driverLicenseController.text =
-          viewModel.registrationData.driverLicenseNumber ?? '';
+      _vehicleProductionYearController.text =
+          viewModel.registrationData.vehicleProductionYear ?? '';
     });
   }
 
   @override
   void dispose() {
-    _driverLicenseController.dispose();
+    _vehicleProductionYearController.dispose();
     super.dispose();
   }
 
@@ -44,7 +44,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
     final appColors = context.appColors;
 
     return ScaffoldWidget(
-      appbarTitle: "Driver license",
+      appbarTitle: "Vehicle Documents",
       showBackButton: true,
       child: Consumer<RiderRegistrationViewModel>(
         builder: (context, viewModel, child) {
@@ -55,19 +55,20 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
               child: Column(
                 children: [
                   // Driver License Number
-                  _buildDriverLicenseNumberSection(
+                  _buildVehicleProductionYearSection(
                       context, viewModel, appColors),
 
                   const SizedBox(height: Dimens.spacing_large),
 
                   // Driver License Front Photo
-                  _buildDriverLicensePhotoSection(
+                  _buildVehicleRegistrationNumberPhotoSection(
                       context, viewModel, appColors),
 
                   const SizedBox(height: Dimens.spacing_large),
 
                   // National ID Card Photo
-                  _buildNationalIdSection(context, viewModel, appColors),
+                  _buildVehicleRegistrationDetailsSection(
+                      context, viewModel, appColors),
 
                   const SizedBox(height: Dimens.spacing_large),
 
@@ -82,7 +83,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
     );
   }
 
-  Widget _buildDriverLicenseNumberSection(BuildContext context,
+  Widget _buildVehicleProductionYearSection(BuildContext context,
       RiderRegistrationViewModel viewModel, dynamic appColors) {
     return Container(
       decoration: BoxDecoration(
@@ -94,24 +95,18 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
         children: [
           TextFieldWidget(
             textInputAction: TextInputAction.next,
-            name: "driverLicenseNumber",
-            hintText: "Driver license number",
-            controller: _driverLicenseController,
+            name: "vehicleProductionYear",
+            hintText: "Vehicle production year",
+            controller: _vehicleProductionYearController,
             isRequired: true,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-          ),
-          TextWidget(
-            text: "${_driverLicenseController.text}",
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: appColors.textMuted,
-                ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDriverLicensePhotoSection(BuildContext context,
+  Widget _buildVehicleRegistrationNumberPhotoSection(BuildContext context,
       RiderRegistrationViewModel viewModel, dynamic appColors) {
     return Container(
       decoration: BoxDecoration(
@@ -121,7 +116,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (viewModel.registrationData.driverLicenseFrontPhoto?.isNotEmpty ==
+          if (viewModel.registrationData.vehicleRegistrationNumberPhoto
+                  ?.isNotEmpty ==
               true) ...[
             Container(
               width: double.infinity,
@@ -157,11 +153,12 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                             child: MediaPickerWidget(
                                 enableCamera: true,
                                 onImageSelected: (imagePath) {
-                                  viewModel.updateDriverLicense(
-                                    driverLicenseFrontPhoto: imagePath,
+                                  viewModel.updateVehicleInfo(
+                                    vehicleRegistrationNumberPhoto: imagePath,
                                   );
                                 },
-                                pickerType: MediaPickerType.licensePhoto),
+                                pickerType: MediaPickerType
+                                    .vehicleRegistrationNumberPhoto),
                           );
                         },
                       ),
@@ -170,7 +167,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                             BorderRadius.circular(Dimens.radius_default),
                         child: ImageWidget(
                           imagePath: viewModel
-                              .registrationData.driverLicenseFrontPhoto!,
+                              .registrationData.vehicleRegistrationNumberPhoto!,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -207,11 +204,12 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                     child: MediaPickerWidget(
                         enableCamera: true,
                         onImageSelected: (imagePath) {
-                          viewModel.updateDriverLicense(
-                            driverLicenseFrontPhoto: imagePath,
+                          viewModel.updateVehicleInfo(
+                            vehicleRegistrationNumberPhoto: imagePath,
                           );
                         },
-                        pickerType: MediaPickerType.licensePhoto),
+                        pickerType:
+                            MediaPickerType.vehicleRegistrationNumberPhoto),
                   );
                 },
               ),
@@ -245,7 +243,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "DRIVER",
+                            "BILLBOOK",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelMedium!
@@ -255,7 +253,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                                 ),
                           ),
                           Text(
-                            "LICENCE",
+                            "NUMBER",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelMedium!
@@ -277,7 +275,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
     );
   }
 
-  Widget _buildNationalIdSection(BuildContext context,
+  Widget _buildVehicleRegistrationDetailsSection(BuildContext context,
       RiderRegistrationViewModel viewModel, dynamic appColors) {
     return Container(
       decoration: BoxDecoration(
@@ -287,7 +285,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (viewModel.registrationData.nationalIdFrontPhoto?.isNotEmpty ==
+          if (viewModel.registrationData.vehicleRegistrationDetailsPhoto
+                  ?.isNotEmpty ==
               true) ...[
             InkWell(
               onTap: () => showModalBottomSheet<void>(
@@ -298,8 +297,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                     padding: const EdgeInsets.all(Dimens.spacing_default),
                     child: MediaPickerWidget(
                         onImageSelected: (imagePath) {
-                          viewModel.updateDriverLicense(
-                            nationalIdFrontPhoto: imagePath,
+                          viewModel.updateVehicleInfo(
+                            vehicleRegistrationDetailsPhoto: imagePath,
                           );
                         },
                         // onImageUploaded: (imagePath) {
@@ -308,7 +307,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                         //   );
                         // },
                         enableCamera: true,
-                        pickerType: MediaPickerType.nationalIdPhoto),
+                        pickerType:
+                            MediaPickerType.vehicleRegistrationDetailsPhoto),
                   );
                 },
               ),
@@ -339,8 +339,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                           ),
                         ),
                         child: ImageWidget(
-                          imagePath:
-                              viewModel.registrationData.nationalIdFrontPhoto!,
+                          imagePath: viewModel.registrationData
+                              .vehicleRegistrationDetailsPhoto!,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -376,8 +376,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                     padding: const EdgeInsets.all(Dimens.spacing_default),
                     child: MediaPickerWidget(
                         onImageSelected: (imagePath) {
-                          viewModel.updateDriverLicense(
-                            nationalIdFrontPhoto: imagePath,
+                          viewModel.updateVehicleInfo(
+                            vehicleRegistrationDetailsPhoto: imagePath,
                           );
                         },
                         // onImageUploaded: (imagePath) {
@@ -386,7 +386,8 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                         //   );
                         // },
                         enableCamera: true,
-                        pickerType: MediaPickerType.nationalIdPhoto),
+                        pickerType:
+                            MediaPickerType.vehicleRegistrationDetailsPhoto),
                   );
                 },
               ),
@@ -420,7 +421,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "NATIONAL",
+                            "BILLBOOK",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelMedium!
@@ -430,7 +431,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
                                 ),
                           ),
                           Text(
-                            "ID CARD",
+                            "DETAILS",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelMedium!
@@ -488,11 +489,12 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
 
   void _handleDone(BuildContext context, RiderRegistrationViewModel viewModel) {
     if (validate()) {
-      viewModel.updateDriverLicense(
-        driverLicenseNumber: _driverLicenseController.text,
-        driverLicenseFrontPhoto:
-            viewModel.registrationData.driverLicenseFrontPhoto,
-        nationalIdFrontPhoto: viewModel.registrationData.nationalIdFrontPhoto,
+      viewModel.updateVehicleInfo(
+        vehicleProductionYear: _vehicleProductionYearController.text,
+        vehicleRegistrationNumberPhoto:
+            viewModel.registrationData.vehicleRegistrationNumberPhoto,
+        vehicleRegistrationDetailsPhoto:
+            viewModel.registrationData.vehicleRegistrationDetailsPhoto,
       );
       context.pop();
     }
