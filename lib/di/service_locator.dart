@@ -27,6 +27,9 @@ import 'package:mydrivenepal/feature/theme/theme_service.dart';
 import 'package:mydrivenepal/feature/topic/data/remote/topic_remote.dart';
 import 'package:mydrivenepal/feature/topic/data/remote/topic_remote_impl.dart';
 import 'package:mydrivenepal/feature/topic/data/topic_repo_impl.dart';
+import 'package:mydrivenepal/feature/user-mode/data/local/location_local_data_source.dart';
+import 'package:mydrivenepal/feature/user-mode/data/remote/location_remote_data_source.dart';
+import 'package:mydrivenepal/feature/user-mode/data/repository/location_repository.dart';
 import 'package:mydrivenepal/provider/password_validator_viewmodel.dart';
 import 'package:mydrivenepal/widget/scaffold/bottom_bar_viewmodel.dart';
 import 'package:get_it/get_it.dart';
@@ -69,6 +72,10 @@ import 'package:mydrivenepal/feature/profile/data/profile_repository.dart';
 import 'package:mydrivenepal/feature/profile/data/profile_repository_impl.dart';
 import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
 import 'package:mydrivenepal/feature/rider-registration/viewmodel/rider_registration_viewmodel.dart';
+
+import 'package:mydrivenepal/shared/service/socket_service.dart';
+import 'package:mydrivenepal/shared/service/location_service.dart';
+import 'package:mydrivenepal/feature/user-mode/user_mode_socket_viewmodel.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -479,5 +486,44 @@ Future setUpServiceLocator() async {
   // Rider Registration Feature
   locator.registerFactory<RiderRegistrationViewModel>(
     () => RiderRegistrationViewModel(),
+  );
+
+  // Socket and Location Services
+  locator.registerLazySingleton<SocketService>(
+    () => SocketService(),
+  );
+
+  locator.registerLazySingleton<LocationService>(
+    () => LocationService(),
+  );
+
+  locator.registerLazySingleton<LocationRepository>(
+    () => LocationRepositoryImpl(
+      remoteDataSource: locator<LocationRemoteDataSource>(),
+      localDataSource: locator<LocationLocalDataSource>(),
+    ),
+  );
+
+  locator.registerLazySingleton<LocationRemoteDataSource>(
+    () => LocationRemoteDataSourceImpl(
+      storage: locator<LocalStorageClient>(
+        instanceName: ServiceNames.SharedPrefManager,
+      ),
+    ),
+  );
+
+  locator.registerLazySingleton<LocationLocalDataSource>(
+    () => LocationLocalDataSourceImpl(
+      storage: locator<LocalStorageClient>(
+        instanceName: ServiceNames.SharedPrefManager,
+      ),
+    ),
+  );
+
+  locator.registerLazySingleton<UserModeSocketViewModel>(
+    () => UserModeSocketViewModel(
+      locationRepository: locator<LocationRepository>(),
+      socketService: locator<SocketService>(),
+    ),
   );
 }

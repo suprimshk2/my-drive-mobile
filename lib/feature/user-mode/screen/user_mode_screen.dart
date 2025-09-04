@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
@@ -7,6 +8,12 @@ import 'package:mydrivenepal/feature/user-mode/user_mode.dart';
 import 'package:mydrivenepal/widget/widget.dart';
 import 'package:mydrivenepal/di/service_locator.dart';
 import 'package:mydrivenepal/feature/user-mode/passenger_mode_viewmodel.dart';
+import 'package:mydrivenepal/feature/user-mode/user_mode_socket_viewmodel.dart';
+import 'package:mydrivenepal/shared/service/socket_service.dart';
+import 'package:mydrivenepal/shared/service/location_service.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:mydrivenepal/router/route_names.dart';
 
 class UserModeScreen extends StatefulWidget {
@@ -16,50 +23,195 @@ class UserModeScreen extends StatefulWidget {
 
 class _UserModeScreenState extends State<UserModeScreen> {
   late UserModeViewModel _userModeViewModel;
+  late UserModeSocketViewModel _socketViewModel;
 
   @override
   void initState() {
     super.initState();
     _userModeViewModel = locator<UserModeViewModel>();
+    _socketViewModel = locator<UserModeSocketViewModel>();
+
     final profileViewModel = locator<ProfileViewmodel>();
     profileViewModel.getUserData();
     profileViewModel.fetchUserRoles();
 
     _loadUserMode();
+    _initializeSocketServices();
   }
 
   Future<void> _loadUserMode() async {
     await _userModeViewModel.loadUserMode();
   }
 
+  Future<void> _initializeSocketServices() async {
+    await _socketViewModel.initialize();
+  }
+
+  @override
+  void dispose() {
+    _socketViewModel.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserModeViewModel>.value(
-      value: _userModeViewModel,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserModeViewModel>.value(
+          value: _userModeViewModel,
+        ),
+        ChangeNotifierProvider<UserModeSocketViewModel>.value(
+          value: _socketViewModel,
+        ),
+      ],
       child: Consumer<ProfileViewmodel>(
-          builder: (context, profileViewModel, child) {
-        return Consumer<UserModeViewModel>(
-          builder: (context, userModeViewModel, child) {
-            log("Building UserModeScreen with currentMode: ${userModeViewModel.currentMode}");
+        builder: (context, profileViewModel, child) {
+          return Consumer2<UserModeViewModel, UserModeSocketViewModel>(
+            builder: (context, userModeViewModel, socketViewModel, child) {
+              log("Building UserModeScreen with currentMode: ${userModeViewModel.currentMode}");
 
-            return ScaffoldWidget(
-              padding: 0,
-              showSideBar: true,
-              child: Column(
+              return ScaffoldWidget(
+                padding: 0,
+                showSideBar: true,
+                child: Column(
+                  children: [
+                    // Socket status indicator
+                    // _buildSocketStatusIndicator(socketViewModel),
+
+                    // Main content
+                    Expanded(
+                      child: _buildModeSpecificContent(profileViewModel),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build socket status indicator
+  Widget _buildSocketStatusIndicator(UserModeSocketViewModel socketViewModel) {
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: socketViewModel.isSocketConnected
+            ? Colors.green[50]
+            : Colors.red[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: socketViewModel.isSocketConnected
+              ? Colors.green[200]!
+              : Colors.red[200]!,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Status icon
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color:
+                  socketViewModel.isSocketConnected ? Colors.green : Colors.red,
+            ),
+          ),
+          SizedBox(width: 8),
+
+          // Status text
+          Expanded(
+            child: Text(
+              socketViewModel.isSocketConnected
+                  ? 'Connected to server'
+                  : 'Disconnected from server',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: socketViewModel.isSocketConnected
+                    ? Colors.green[700]
+                    : Colors.red[700],
+              ),
+            ),
+          ),
+
+          // Location tracking status
+          if (socketViewModel.isLocationTracking)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Mode-specific welcome message
-                  // _buildWelcomeMessage(userModeViewModel),
-
-                  // Main content
-                  Expanded(
-                    child: _buildModeSpecificContent(profileViewModel),
+                  Icon(
+                    Icons.location_on,
+                    size: 16,
+                    color: Colors.blue[700],
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    'Tracking',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue[700],
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
-            );
-          },
-        );
-      }),
+            ),
+
+          SizedBox(width: 8),
+
+          // Action buttons
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Start/Stop tracking button
+              ElevatedButton(
+                onPressed: socketViewModel.isLocationTracking
+                    ? () => socketViewModel.stopTracking()
+                    : () => socketViewModel.startTracking(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: socketViewModel.isLocationTracking
+                      ? Colors.red
+                      : Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  minimumSize: Size(0, 36),
+                ),
+                child: Text(
+                  socketViewModel.isLocationTracking ? 'Stop' : 'Start',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+
+              SizedBox(width: 8),
+
+              // Disconnect button
+              OutlinedButton(
+                onPressed: socketViewModel.isSocketConnected
+                    ? () => socketViewModel.disconnectSocket()
+                    : null,
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  minimumSize: Size(0, 36),
+                ),
+                child: Text(
+                  'Disconnect',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

@@ -31,4 +31,6 @@ class LocalStorageKeys {
   static const String canSwitchToPassenger = 'can_switch_to_passenger';
   static const String userMode = 'user_mode';
   static const String userRoles = 'user_roles';
+  static const String LAST_KNOWN_LOCATION = 'last_known_location';
+  static const String LOCATION_HISTORY = 'location_history';
 }
