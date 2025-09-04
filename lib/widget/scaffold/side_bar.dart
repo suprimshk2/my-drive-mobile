@@ -895,10 +895,10 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
                                 label: 'Get Started',
                                 onPressed: () async {
                                   context.push(RouteNames.riderRegistration);
-                                  // await profileViewModel.assignRole();
-                                  // await profileViewModel.getUserData();
-                                  // await profileViewModel.switchToDriverMode();
-                                  // Navigator.of(context).pop(true);
+                                  await profileViewModel.assignRole();
+                                  await profileViewModel.getUserData();
+                                  await profileViewModel.switchToDriverMode();
+                                  Navigator.of(context).pop(true);
                                 }),
                           ),
                         ],

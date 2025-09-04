@@ -18,7 +18,23 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.mydrivenepal",
+            "certificate_hash": "da378969ff7481543231d03f876f9d3f00a4d1f1"
+          }
+        },
+        {
+          "client_id": "1005732016721-lb6j9rrga2kn07vivo61mp3c5uh3u05s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mydrivenepal",
             "certificate_hash": "b8863d218d488c7c3071b378e0f18aea9f7aa4ed"
+          }
+        },
+        {
+          "client_id": "1005732016721-qban6usmvqvfvac0llsh3pm93iep1ei5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mydrivenepal",
+            "certificate_hash": "0b2829ef977105b39f80330ab345263c3a081cc7"
           }
         },
         {

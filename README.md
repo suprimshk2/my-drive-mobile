@@ -9,7 +9,7 @@
     - flutter build apk --flavor=myswaddle --dart-define=FLAVOR=myswaddle (i.e, qa,dev,prod)
       - flutter build apk --flavor=mydrivenepal --dart-define=FLAVOR=mydrivenepal --debug
   - generate aab
-    - flutter build appbundle --flavor=mydrivenepal --dart-define=FLAVOR=mydrivenepal(i.e, qa,dev,prod)
+    - flutter build appbundle --flavor=mydrivenepal --dart-define=FLAVOR=mydrivenepal --release(i.e, qa,dev,prod)
 
 # ios
   - run
