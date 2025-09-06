@@ -68,19 +68,6 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                                 .registrationData.isBasicInfoComplete &&
                             !viewModel.registrationData.isDriverLicenseComplete,
                       ),
-                      // RegistrationStepItem(
-                      //   title: "Selfie with ID",
-                      //   onTap: () =>
-                      //       context.pushNamed(AppRoute.riderDriverLicense.name),
-                      //   isCompleted: viewModel.registrationData
-                      //           .nationalIdFrontPhoto?.isNotEmpty ==
-                      //       true,
-                      //   isActive: viewModel
-                      //           .registrationData.isDriverLicenseComplete &&
-                      //       viewModel.registrationData.nationalIdFrontPhoto
-                      //               ?.isEmpty ==
-                      //           true,
-                      // ),
                       RegistrationStepItem(
                         title: "Vehicle Info",
                         onTap: () =>
@@ -96,24 +83,30 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
                 ),
 
                 const SizedBox(height: Dimens.spacing_extra_large),
-
                 // Done Button
                 SizedBox(
                   width: double.infinity,
                   child: RoundedFilledButtonWidget(
                     context: context,
-                    label: "Done",
-                    onPressed: viewModel.registrationData.isRegistrationComplete
-                        ? () => _handleSubmit(context, viewModel)
-                        : null,
-                    enabled: viewModel.registrationData.isRegistrationComplete,
+                    label: viewModel.isLoading ? "Submitting..." : "Submit",
+                    onPressed:
+                        viewModel.registrationData.isRegistrationComplete &&
+                                !viewModel.isLoading
+                            ? () => _handleSubmit(context, viewModel)
+                            : null,
+                    enabled:
+                        viewModel.registrationData.isRegistrationComplete &&
+                            !viewModel.isLoading,
                     backgroundColor:
-                        viewModel.registrationData.isRegistrationComplete
+                        viewModel.registrationData.isRegistrationComplete &&
+                                !viewModel.isLoading
                             ? null
                             : appColors.bgGraySubtle,
-                    textColor: viewModel.registrationData.isRegistrationComplete
-                        ? AppColors.white
-                        : appColors.textMuted,
+                    textColor:
+                        viewModel.registrationData.isRegistrationComplete &&
+                                !viewModel.isLoading
+                            ? AppColors.white
+                            : appColors.textMuted,
                   ),
                 ),
 
@@ -180,8 +173,8 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
 
   void _handleSubmit(
       BuildContext context, RiderRegistrationViewModel viewModel) async {
-    final success = await viewModel.submitRegistration();
-    if (success && context.mounted) {
+    await viewModel.submitRegistration();
+    if (viewModel.riderRegistrationUsecase.hasCompleted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -190,6 +183,13 @@ class _RiderRegistrationScreenState extends State<RiderRegistrationScreen> {
         ),
       );
       context.pop();
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(viewModel.errorMessage ?? 'Registration failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

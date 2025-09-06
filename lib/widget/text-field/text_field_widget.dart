@@ -185,10 +185,12 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   ),
             hintText: widget.hintText,
             border: generateInputFieldBorder(appColors.borderGraySoftAlpha50),
-            enabledBorder:
-                generateInputFieldBorder(appColors.borderGraySoftAlpha50),
-            focusedBorder:
-                generateInputFieldBorder(appColors.borderPrimaryMain),
+            enabledBorder: widget.readOnly
+                ? generateInputFieldBorder(appColors.borderGraySoftAlpha50)
+                : generateInputFieldBorder(appColors.borderGraySoftAlpha50),
+            focusedBorder: widget.readOnly
+                ? generateInputFieldBorder(appColors.borderGraySoftAlpha50)
+                : generateInputFieldBorder(appColors.borderPrimaryMain),
             errorBorder: generateInputFieldBorder(appColors.error.main),
             focusedErrorBorder: generateInputFieldBorder(appColors.error.main),
             errorStyle: Theme.of(context).textTheme.caption.copyWith(

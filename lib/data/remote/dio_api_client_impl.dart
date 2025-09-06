@@ -209,8 +209,8 @@ class DioApiClientImpl implements ApiClient {
   }) async {
     try {
       FormData formData = FormData.fromMap(data ?? {});
-
-      var response = await dio.patch(
+      print('formData MULTIPART---------->: $formData');
+      var response = await dio.post(
         path,
         data: formData,
         onSendProgress: onSendProgress,
@@ -222,6 +222,8 @@ class DioApiClientImpl implements ApiClient {
 
       return ApiResponse.fromJson(response.data);
     } catch (e) {
+      debugPrint(
+          'API Error | Method: MULTIPART | Path: $path | Error: ${e.toString()}');
       rethrow;
     }
   }
@@ -250,10 +252,13 @@ class DioApiClientImpl implements ApiClient {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
 
-    options.headers['requestsource'] = 'localhost';
-    options.headers['content-type'] = 'application/json';
-    options.headers['ownerid'] = '3!@/fX7';
-    options.headers['Accept'] = 'application/json, text/plain, /';
+    // options.headers['requestsource'] = 'localhost';
+    // options.headers['content-type'] = 'application/json';
+    // if (!options.headers.containsKey('content-type')) {
+    // options.headers['content-type'] = 'application/json';
+    // }
+    // options.headers['ownerid'] = '3!@/fX7';
+    // options.headers['Accept'] = 'application/json, text/plain, /';
     return handler.next(options);
   }
 

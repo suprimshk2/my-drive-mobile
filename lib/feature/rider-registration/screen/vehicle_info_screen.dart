@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mydrivenepal/feature/rider-registration/widget/registration_step_item.dart';
 import 'package:mydrivenepal/widget/dropdown/drop_down_menu_widget.dart';
@@ -272,55 +273,60 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
       RiderRegistrationViewModel viewModel,
       TextEditingController brandController) {
     String? type = viewModel.registrationData.vehicleType;
+    final _formKey = GlobalKey<FormBuilderState>();
 
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) => Container(
         height: isKeyboardVisible(context)
-            ? 900
+            ? 500
             : Dimens.spacing_300 + Dimens.spacing_50,
         padding: const EdgeInsets.all(Dimens.spacing_default),
-        child: Column(
-          children: [
-            SizedBox(height: Dimens.spacing_over_large),
-            TextFieldWidget(
-              onFieldSubmitted: (_) =>
-                  _handleBrandDone(context, viewModel, brandController),
-              textInputAction: TextInputAction.done,
-              name: "brand",
-              hintText: "Brand",
-              controller: brandController,
-              isRequired: true,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-            ),
-            SizedBox(height: Dimens.spacing_default),
-            DropDownMenuWidget(
-              name: "type",
-              label: "",
-              hint: "Select Vehicle Type",
-              value: type,
-              items: viewModel.vehicleTypeDropdownItems, // Use viewModel method
-              onChanged: (value) {
-                viewModel.updateVehicleType(value); // Use viewModel method
-              },
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: RoundedFilledButtonWidget(
-                context: context,
-                label: "Done",
-                onPressed: () =>
-                    _handleBrandDone(context, viewModel, brandController),
-                // enabled: viewModel.registrationData.isDriverLicenseComplete,
-                // backgroundColor: viewModel.registrationData.isDriverLicenseComplete
-                //     ? null
-                //     : appColors.bgGraySubtle,
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              SizedBox(height: Dimens.spacing_over_large),
+              DropDownMenuWidget(
+                name: "type",
+                label: "",
+                hint: "Select Vehicle Type",
+                value: type,
+                items:
+                    viewModel.vehicleTypeDropdownItems, // Use viewModel method
+                onChanged: (value) {
+                  viewModel.updateVehicleType(value); // Use viewModel method
+                },
               ),
-            ),
-            SizedBox(height: Dimens.spacing_32),
-          ],
+              SizedBox(height: Dimens.spacing_default),
+              TextFieldWidget(
+                onFieldSubmitted: (_) =>
+                    _handleBrandDone(context, viewModel, brandController),
+                textInputAction: TextInputAction.done,
+                name: "brand",
+                hintText: "Brand",
+                controller: brandController,
+                isRequired: true,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: RoundedFilledButtonWidget(
+                  context: context,
+                  label: "Done",
+                  onPressed: () =>
+                      _handleBrandDone(context, viewModel, brandController),
+                  // enabled: viewModel.registrationData.isDriverLicenseComplete,
+                  // backgroundColor: viewModel.registrationData.isDriverLicenseComplete
+                  //     ? null
+                  //     : appColors.bgGraySubtle,
+                ),
+              ),
+              SizedBox(height: Dimens.spacing_32),
+            ],
+          ),
         ),
       ),
     );
@@ -396,12 +402,17 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (brandController.text.isNotEmpty) {
-      viewModel.updateDriverLicense(
-        driverLicenseNumber: brandController.text,
-        driverLicenseFrontPhoto:
-            viewModel.registrationData.driverLicenseFrontPhoto,
-        nationalIdFrontPhoto: viewModel.registrationData.nationalIdFrontPhoto,
-      );
+      // viewModel.updateVehicleInfo(
+      //   vehicleBrand: brandController.text,
+      //   vehiclePhoto: viewModel.registrationData.vehiclePhoto,
+      //   registrationPlate: viewModel.registrationData.registrationPlate,
+      //   vehicleRegistrationNumberPhoto:
+      //       viewModel.registrationData.vehicleRegistrationNumberPhoto,
+      //   vehicleRegistrationDetailsPhoto:
+      //       viewModel.registrationData.vehicleRegistrationDetailsPhoto,
+      //   vehicleProductionYear: viewModel.registrationData.vehicleProductionYear,
+      //   vehicleType: viewModel.registrationData.vehicleType,
+      // );
       context.pop();
     }
   }

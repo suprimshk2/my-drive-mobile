@@ -15,6 +15,8 @@ class UserDataResponse {
   ProviderData? providerData;
   String? currentRole;
   List<String>? roleNames;
+  String? dateOfBirth;
+  String? phoneNumber;
 
   UserDataResponse({
     this.id,
@@ -31,6 +33,8 @@ class UserDataResponse {
     this.providerData,
     this.currentRole,
     this.roleNames,
+    this.dateOfBirth,
+    this.phoneNumber,
   });
 
   factory UserDataResponse.fromJson(Map<String, dynamic> json) {
@@ -56,9 +60,11 @@ class UserDataResponse {
           ? ProviderData.fromJson(jsonDecode(json['providerData']))
           : null,
       currentRole: json['currentRole'],
+      dateOfBirth: json['dateOfBirth'],
       roleNames: json['roleNames'] != null
           ? List<String>.from(json['roleNames'])
           : null,
+      phoneNumber: json['phoneNumber'],
     );
   }
 
@@ -78,6 +84,8 @@ class UserDataResponse {
       'providerData': providerData?.toJson(),
       'currentRole': currentRole,
       'roleNames': roleNames,
+      'dateOfBirth': dateOfBirth,
+      'phoneNumber': phoneNumber,
     };
   }
 

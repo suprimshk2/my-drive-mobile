@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
 import 'package:mydrivenepal/shared/theme/app_text_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -41,13 +42,14 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // final viewModel = context.read<RiderRegistrationViewModel>();
-      // final data = viewModel.registrationData;
+      final viewModel = context.read<ProfileViewmodel>();
+      final data = viewModel.userDataUseCase.data;
 
-      // _firstNameController.text = data.firstName ?? '';
-      // _lastNameController.text = data.lastName ?? '';
-      // _emailController.text = data.email ?? '';
-      // _dateOfBirthController.text = data.dateOfBirth ?? '';
+      firstNameController.text = data?.firstName ?? '';
+      lastNameController.text = data?.lastName ?? '';
+      emailController.text = data?.email ?? '';
+      dateOfBirthController.text = data?.dateOfBirth ?? '';
+      phoneController.text = data?.phoneNumber ?? '';
     });
   }
 
@@ -57,6 +59,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
     lastNameController.dispose();
     emailController.dispose();
     dateOfBirthController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -72,6 +75,11 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
   @override
   Widget build(BuildContext context) {
     final appColors = context.appColors;
+    final isFirstNameReadOnly = firstNameController.text.isNotEmpty;
+    final isLastNameReadOnly = lastNameController.text.isNotEmpty;
+    final isDateOfBirthReadOnly = dateOfBirthController.text.isNotEmpty;
+    final isPhoneReadOnly = phoneController.text.isNotEmpty;
+    final isEmailReadOnly = emailController.text.isNotEmpty;
 
     return Consumer<RiderRegistrationViewModel>(
         builder: (context, viewModel, child) => ScaffoldWidget(
@@ -96,6 +104,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       ),
                       const SizedBox(height: Dimens.spacing_8),
                       TextFieldWidget(
+                        readOnly: isFirstNameReadOnly,
                         textInputAction: TextInputAction.next,
                         focusNode: firstNameFocusNode,
                         nextNode: lastNameFocusNode,
@@ -107,6 +116,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       ),
                       const SizedBox(height: Dimens.spacing_8),
                       TextFieldWidget(
+                        readOnly: isLastNameReadOnly,
                         textInputAction: TextInputAction.next,
                         focusNode: lastNameFocusNode,
                         nextNode: dobFocusNode,
@@ -138,6 +148,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       ),
                       const SizedBox(height: Dimens.spacing_8),
                       TextFieldWidget(
+                        readOnly: isDateOfBirthReadOnly,
                         focusNode: dobFocusNode,
                         nextNode: phoneFocusNode,
                         textInputAction: TextInputAction.next,
@@ -148,7 +159,6 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         controller: dateOfBirthController,
                         isRequired: true,
                         autoFocus: false,
-                        readOnly: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                       const SizedBox(height: Dimens.spacing_large),
@@ -162,6 +172,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       ),
                       const SizedBox(height: Dimens.spacing_8),
                       TextFieldWidget(
+                        readOnly: isPhoneReadOnly,
                         inputFormat: [TextFieldMaskings.phoneNumberMasking],
                         textInputAction: TextInputAction.next,
                         focusNode: phoneFocusNode,
@@ -171,15 +182,17 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         controller: phoneController,
                         isRequired: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
+                        textInputType: TextInputType.phone,
                         validator: [
                           FormBuilderValidators.minLength(
-                            14,
+                            12,
                             errorText: "Invalid phone number",
                           ),
                         ],
                       ),
                       const SizedBox(height: Dimens.spacing_8),
                       TextFieldWidget(
+                        readOnly: isEmailReadOnly,
                         textInputAction: TextInputAction.next,
                         focusNode: emailFocusNode,
                         name: "email",
@@ -229,6 +242,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
         lastName: lastNameController.text,
         dateOfBirth: dateOfBirthController.text,
         email: emailController.text,
+        phoneNumber: phoneController.text,
       );
       // viewModel.setPersonalInfo(
       //   firstName: firstNameController.text,

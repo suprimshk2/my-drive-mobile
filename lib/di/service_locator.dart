@@ -69,6 +69,12 @@ import 'package:mydrivenepal/feature/profile/data/profile_repository.dart';
 import 'package:mydrivenepal/feature/profile/data/profile_repository_impl.dart';
 import 'package:mydrivenepal/feature/profile/screen/profile_viewmodel.dart';
 import 'package:mydrivenepal/feature/rider-registration/viewmodel/rider_registration_viewmodel.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/remote/rider_registration_remote.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/remote/rider_registration_remote_impl.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/repository/rider_registration_repository.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/repository/rider_registration_repository_impl.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/model/rider_registration_request.dart';
+import 'package:mydrivenepal/data/remote/data/model/api_response.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -478,6 +484,19 @@ Future setUpServiceLocator() async {
 
   // Rider Registration Feature
   locator.registerFactory<RiderRegistrationViewModel>(
-    () => RiderRegistrationViewModel(),
+    () => RiderRegistrationViewModel(
+      repository: locator<RiderRegistrationRepository>(),
+    ),
+  );
+
+  // Rider Registration
+  locator.registerLazySingleton<RiderRegistrationRemote>(
+    () => RiderRegistrationRemoteImpl(apiClient: locator<ApiClient>()),
+  );
+
+  locator.registerLazySingleton<RiderRegistrationRepository>(
+    () => RiderRegistrationRepositoryImpl(
+        remote: locator<RiderRegistrationRemote>(),
+        authLocal: locator<AuthLocal>()),
   );
 }

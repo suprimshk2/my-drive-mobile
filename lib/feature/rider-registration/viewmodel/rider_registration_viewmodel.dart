@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mydrivenepal/feature/rider-registration/model/vehicle_type_model.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/repository/rider_registration_repository.dart';
+import 'package:mydrivenepal/feature/rider-registration/data/model/rider_registration_request.dart';
+import 'package:mydrivenepal/data/remote/data/model/api_response.dart';
+import 'package:mydrivenepal/shared/util/response.dart';
 import '../model/rider_registration_model.dart';
 
 class RiderRegistrationViewModel extends ChangeNotifier {
+  final RiderRegistrationRepository _repository;
+
   RiderRegistrationModel _registrationData = RiderRegistrationModel();
   bool _isLoading = false;
   String? _errorMessage;
+  // int _uploadProgress = 0;
+
+  RiderRegistrationViewModel({required RiderRegistrationRepository repository})
+      : _repository = repository;
 
   RiderRegistrationModel get registrationData => _registrationData;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  // int get uploadProgress => _uploadProgress;
 
   // Vehicle types data
   final List<VehicleTypeModel> _vehicleTypes = [
@@ -50,6 +61,7 @@ class RiderRegistrationViewModel extends ChangeNotifier {
     String? dateOfBirth,
     String? email,
     String? profilePhoto,
+    String? phoneNumber,
   }) {
     _registrationData = _registrationData.copyWith(
       firstName: firstName,
@@ -57,6 +69,7 @@ class RiderRegistrationViewModel extends ChangeNotifier {
       dateOfBirth: dateOfBirth,
       email: email,
       profilePhoto: profilePhoto,
+      phoneNumber: phoneNumber,
     );
     notifyListeners();
   }
@@ -65,11 +78,13 @@ class RiderRegistrationViewModel extends ChangeNotifier {
     String? driverLicenseNumber,
     String? driverLicenseFrontPhoto,
     String? nationalIdFrontPhoto,
+    String? driverLicense,
   }) {
     _registrationData = _registrationData.copyWith(
       driverLicenseNumber: driverLicenseNumber,
       driverLicenseFrontPhoto: driverLicenseFrontPhoto,
       nationalIdFrontPhoto: nationalIdFrontPhoto,
+      driverLicense: driverLicense,
     );
     notifyListeners();
   }
@@ -109,25 +124,52 @@ class RiderRegistrationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> submitRegistration() async {
+  // void _updateUploadProgress(int sent, int total) {
+  //   _uploadProgress = ((sent / total) * 100).round();
+  //   notifyListeners();
+  // }
+
+  // Response<RiderRegistrationResponse> _riderRegistrationUsecase =
+  //     Response<RiderRegistrationResponse>();
+  // Response<RiderRegistrationResponse> get riderRegistrationUsecase =>
+  //     _riderRegistrationUsecase;
+
+  // set riderRegistrationUsecase(Response<RiderRegistrationResponse> response) {
+  //   _riderRegistrationUsecase = response;
+  //   notifyListeners();
+  // }
+  Response<dynamic> _riderRegistrationUsecase = Response<dynamic>();
+  Response<dynamic> get riderRegistrationUsecase => _riderRegistrationUsecase;
+
+  set riderRegistrationUsecase(Response<dynamic> response) {
+    _riderRegistrationUsecase = response;
+    notifyListeners();
+  }
+
+  Future<void> submitRegistration() async {
     if (!_registrationData.isRegistrationComplete) {
       setError('Please complete all required fields');
-      return false;
+      return;
     }
 
-    setLoading(true);
-    setError(null);
+    // _uploadProgress = 0;
 
     try {
-      // TODO: Implement API call to submit registration
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      riderRegistrationUsecase = Response.loading();
+      // Create request from registration data
+      final request =
+          RiderRegistrationRequest.fromRegistrationModel(_registrationData);
 
-      setLoading(false);
-      return true;
+      // Submit registration with progress tracking
+      final response = await _repository.submitRiderRegistration(
+        request: request,
+
+        // onSendProgress: _updateUploadProgress,
+      );
+
+      riderRegistrationUsecase = Response.complete(response);
     } catch (e) {
-      setLoading(false);
-      setError('Failed to submit registration. Please try again.');
-      return false;
+      riderRegistrationUsecase = Response.error(e);
     }
   }
 }

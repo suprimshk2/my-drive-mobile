@@ -14,6 +14,8 @@ class RiderRegistrationModel {
   final String? vehicleRegistrationDetailsPhoto;
   final String? vehicleProductionYear;
   final String? vehicleType;
+  final String? phoneNumber;
+  final String? driverLicense;
 
   RiderRegistrationModel({
     this.firstName,
@@ -31,6 +33,8 @@ class RiderRegistrationModel {
     this.vehicleRegistrationDetailsPhoto,
     this.vehicleProductionYear,
     this.vehicleType,
+    this.phoneNumber,
+    this.driverLicense,
   });
 
   RiderRegistrationModel copyWith({
@@ -49,6 +53,8 @@ class RiderRegistrationModel {
     String? vehicleRegistrationDetailsPhoto,
     String? vehicleProductionYear,
     String? vehicleType,
+    String? phoneNumber,
+    String? driverLicense,
   }) {
     return RiderRegistrationModel(
       firstName: firstName ?? this.firstName,
@@ -70,18 +76,22 @@ class RiderRegistrationModel {
       vehicleProductionYear:
           vehicleProductionYear ?? this.vehicleProductionYear,
       vehicleType: vehicleType ?? this.vehicleType,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      driverLicense: driverLicense ?? this.driverLicense,
     );
   }
 
   bool get isBasicInfoComplete =>
       firstName?.isNotEmpty == true &&
       lastName?.isNotEmpty == true &&
-      dateOfBirth?.isNotEmpty == true;
+      dateOfBirth?.isNotEmpty == true &&
+      phoneNumber?.isNotEmpty == true;
 
   bool get isDriverLicenseComplete =>
       driverLicenseNumber?.isNotEmpty == true &&
       driverLicenseFrontPhoto?.isNotEmpty == true &&
-      nationalIdFrontPhoto?.isNotEmpty == true;
+      nationalIdFrontPhoto?.isNotEmpty == true &&
+      driverLicense?.isNotEmpty == true;
 
   bool get isVehicleInfoComplete =>
       vehicleBrand?.isNotEmpty == true &&

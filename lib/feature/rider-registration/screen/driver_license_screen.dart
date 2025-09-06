@@ -492,7 +492,7 @@ class _DriverLicenseScreenState extends State<DriverLicenseScreen> {
         driverLicenseNumber: _driverLicenseController.text,
         driverLicenseFrontPhoto:
             viewModel.registrationData.driverLicenseFrontPhoto,
-        nationalIdFrontPhoto: viewModel.registrationData.nationalIdFrontPhoto,
+        driverLicense: viewModel.registrationData.driverLicenseFrontPhoto,
       );
       context.pop();
     }

@@ -68,4 +68,7 @@ class RemoteAPIConstant {
 
   // Assign Role
   static String ASSIGN_ROLE = '/auth/assign-role';
+// {{base_url}}/user-setup/{{user_id}}/ride-setup
+  // Rider Registration
+  static String RIDER_REGISTRATION = '/user-setup/:userId/ride-setup';
 }
